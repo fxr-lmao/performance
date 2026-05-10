@@ -3,10 +3,15 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-na
 import { PVTTest } from '../components/PVTTest';
 import { calculateReadiness, ReadinessResult } from '../utils/readiness';
 import { RunnaService, OverriddenWorkout } from '../services/runna';
+import { AcademicService } from '../services/academic';
 
 type BriefingStep = 'intro' | 'pvt' | 'results';
 
-export const MorningBriefing: React.FC = () => {
+interface MorningBriefingProps {
+  onFinish?: () => void;
+}
+
+export const MorningBriefing: React.FC<MorningBriefingProps> = ({ onFinish }) => {
   const [step, setStep] = useState<BriefingStep>('intro');
   const [readiness, setReadiness] = useState<ReadinessResult | null>(null);
   const [pvtStats, setPvtStats] = useState<{rt: number, lapses: number, falseStarts: number} | null>(null);
@@ -19,7 +24,6 @@ export const MorningBriefing: React.FC = () => {
       falseStarts: result.falseStarts
     });
 
-    // Mocking other biometric inputs for now (would normally come from Garmin sync)
     const mockInputs = {
       hrvDelta: 85,
       sleepScore: 90,
@@ -31,9 +35,12 @@ export const MorningBriefing: React.FC = () => {
     const readinessResult = calculateReadiness(mockInputs);
     setReadiness(readinessResult);
 
+    // Academic / 72h Exam Rule Check
+    const examContext = await AcademicService.isExamWithin72h();
+
     // Fetch and Override Plan
     const planned = await RunnaService.fetchTodayPlan();
-    const overridden = RunnaService.applyReadinessOverride(planned, readinessResult.state);
+    const overridden = RunnaService.applyReadinessOverride(planned, readinessResult.state, examContext);
     setWorkout(overridden);
 
     setStep('results');
@@ -103,7 +110,7 @@ export const MorningBriefing: React.FC = () => {
             <Text style={styles.detailsText}>False Starts: {pvtStats.falseStarts}</Text>
           </View>
 
-          <TouchableOpacity style={styles.actionButton} onPress={() => console.log('Proceed to Deep Work')}>
+          <TouchableOpacity style={styles.actionButton} onPress={() => { if(onFinish) onFinish(); }}>
             <Text style={styles.actionButtonText}>Acknowledge & Begin Deep Work</Text>
           </TouchableOpacity>
         </View>

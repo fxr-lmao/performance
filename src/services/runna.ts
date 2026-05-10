@@ -42,8 +42,24 @@ export class RunnaService {
    * Plan Override System: Modifies the planned workout based on the daily Readiness Score.
    * Enforces the logic specified in the Performance OS Architecture.
    */
-  static applyReadinessOverride(workout: PlannedWorkout, readinessState: ReadinessState): OverriddenWorkout {
+  static applyReadinessOverride(
+    workout: PlannedWorkout, 
+    readinessState: ReadinessState,
+    examContext?: { isActive: boolean; examTitle?: string }
+  ): OverriddenWorkout {
     const modified: OverriddenWorkout = { ...workout, isModified: false };
+
+    // 72h Exam Rule: Override readiness if cognitive protection is needed
+    if (examContext?.isActive && (readinessState === 'Peak' || readinessState === 'Good')) {
+      modified.originalType = workout.type;
+      modified.type = 'Easy';
+      modified.title = 'Zone 2 Recovery Run (Cognitive Protection)';
+      modified.intensityTarget = 'Zone 2 (Light Aerobic)';
+      modified.durationMinutes = Math.floor(workout.durationMinutes * 0.7); // -30%
+      modified.isModified = true;
+      modified.overrideReason = `72h EXAM RULE: ${examContext.examTitle}. Physical intensity capped to protect cognitive state.`;
+      return modified;
+    }
 
     switch (readinessState) {
       case 'Peak':

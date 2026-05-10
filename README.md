@@ -101,9 +101,9 @@ $$Score = 0.28 \cdot HRV_{\Delta} + 0.25 \cdot SleepScore + 0.20 \cdot TSB_{norm
 - [x] Build the "Plan Override" system based on Readiness.
 
 ### Phase 4: Academic Integration
-- [ ] Integrate School Calendar (ICS/CalDAV).
-- [ ] Implement the "72h Exam Rule" logic for training reduction.
-- [ ] Create the Deep Work timer/tracker.
+- [x] Integrate School Calendar (ICS/CalDAV).
+- [x] Implement the "72h Exam Rule" logic for training reduction.
+- [x] Create the Deep Work timer/tracker.
 
 ### Phase 5: Pilot Log & Certification
 - [ ] Build long-term trend graphs (10-year database visualization).
