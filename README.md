@@ -91,9 +91,9 @@ $$Score = 0.28 \cdot HRV_{\Delta} + 0.25 \cdot SleepScore + 0.20 \cdot TSB_{norm
 - [x] Implement Garmin OAuth Flux & Webhook listeners.
 
 ### Phase 2: Readiness Engine
-- [ ] Build the PVT (Psychomotor Vigilance Test) component.
-- [ ] Implement the Readiness Score Algorithm ($Score$).
-- [ ] Create the Daily Morning Briefing UI.
+- [x] Build the PVT (Psychomotor Vigilance Test) component.
+- [x] Implement the Readiness Score Algorithm ($Score$).
+- [x] Create the Daily Morning Briefing UI.
 
 ### Phase 3: Training & Performance
 - [ ] Integrate FIT file parsing (TSB calculation).
