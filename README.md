@@ -86,9 +86,9 @@ $$Score = 0.28 \cdot HRV_{\Delta} + 0.25 \cdot SleepScore + 0.20 \cdot TSB_{norm
 *Use the checkboxes below to track implementation progress.*
 
 ### Phase 1: Foundation
-- [ ] Initialize React Native + Expo project.
-- [ ] Configure WatermelonDB Schema (Readiness, PVT, Workouts).
-- [ ] Implement Garmin OAuth Flux & Webhook listeners.
+- [x] Initialize React Native + Expo project.
+- [x] Configure WatermelonDB Schema (Readiness, PVT, Workouts).
+- [x] Implement Garmin OAuth Flux & Webhook listeners.
 
 ### Phase 2: Readiness Engine
 - [ ] Build the PVT (Psychomotor Vigilance Test) component.
