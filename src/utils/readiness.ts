@@ -18,7 +18,13 @@ export interface ReadinessResult {
  * Formula: Score = 0.28*HRV_delta + 0.25*SleepScore + 0.20*TSB_norm + 0.15*PVT_delta + 0.12*RPE_inv
  */
 export function calculateReadiness(inputs: ReadinessInputs): ReadinessResult {
-  const { hrvDelta, sleepScore, tsbNorm, pvtDelta, rpeInv } = inputs;
+  // Clamp all inputs to 0-100 range to prevent out-of-bounds scores
+  const clamp = (v: number) => Math.max(0, Math.min(100, v));
+  const hrvDelta = clamp(inputs.hrvDelta);
+  const sleepScore = clamp(inputs.sleepScore);
+  const tsbNorm = clamp(inputs.tsbNorm);
+  const pvtDelta = clamp(inputs.pvtDelta);
+  const rpeInv = clamp(inputs.rpeInv);
 
   const score = Math.round(
     0.28 * hrvDelta +

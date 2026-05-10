@@ -14,7 +14,10 @@ const GARMIN_AUTH_URL = 'https://connect.garmin.com/oauthConfirm';
 export class GarminService {
   /**
    * Initializes the Garmin OAuth Flux
-   * Prompts the user to authorize the app to access Garmin Health data
+   * Prompts the user to authorize the app to access Garmin Health data.
+   * 
+   * Uses the modern AuthSession.useAuthRequest pattern via a static wrapper.
+   * In production, this would be called from a React component using the hook directly.
    */
   static async authorize(): Promise<string | null> {
     const redirectUri = AuthSession.makeRedirectUri({
@@ -24,10 +27,15 @@ export class GarminService {
     const authUrl = `${GARMIN_AUTH_URL}?oauth_callback=${encodeURIComponent(redirectUri)}&client_id=${GARMIN_CLIENT_ID}`;
 
     try {
-      const result = await AuthSession.startAsync({ authUrl });
-      if (result.type === 'success' && result.params.oauth_token) {
-        // Exchange token logic here
-        return result.params.oauth_token;
+      // Use openAuthSessionAsync instead of the deprecated startAsync
+      const result = await AuthSession.openAuthSessionAsync(authUrl, redirectUri);
+      if (result.type === 'success' && result.url) {
+        // Parse the oauth_token from the redirect URL
+        const params = new URLSearchParams(result.url.split('?')[1] || '');
+        const oauthToken = params.get('oauth_token');
+        if (oauthToken) {
+          return oauthToken;
+        }
       }
     } catch (error) {
       console.error('Garmin OAuth Error:', error);

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 
 const TOTAL_MINUTES = 170; // 2h50m (06:10 to 09:00)
+const TOTAL_SECONDS = TOTAL_MINUTES * 60;
 
 interface DeepWorkTimerProps {
   onFinish?: () => void;
@@ -9,40 +10,37 @@ interface DeepWorkTimerProps {
 
 export const DeepWorkTimer: React.FC<DeepWorkTimerProps> = ({ onFinish }) => {
   const [isRunning, setIsRunning] = useState(false);
-  const [minutesLeft, setMinutesLeft] = useState(TOTAL_MINUTES);
-  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(TOTAL_SECONDS);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setSecondsLeft((prevSec) => {
-          if (prevSec > 0) return prevSec - 1;
-          if (minutesLeft > 0) {
-            setMinutesLeft((prevMin) => prevMin - 1);
-            return 59;
+    if (isRunning && remainingSeconds > 0) {
+      intervalRef.current = setInterval(() => {
+        setRemainingSeconds((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalRef.current as ReturnType<typeof setInterval>);
+            return 0;
           }
-          clearInterval(interval as NodeJS.Timeout);
-          return 0;
+          return prev - 1;
         });
       }, 1000);
-    } else if (!isRunning && secondsLeft !== 0) {
-      clearInterval(interval as NodeJS.Timeout);
     }
+
     return () => {
-      if (interval) clearInterval(interval);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isRunning, minutesLeft, secondsLeft]);
+  }, [isRunning]); // Only depend on isRunning — remainingSeconds is handled via functional updater
 
-  const progressPercentage = ((TOTAL_MINUTES * 60 - (minutesLeft * 60 + secondsLeft)) / (TOTAL_MINUTES * 60)) * 100;
+  const minutesLeft = Math.floor(remainingSeconds / 60);
+  const secondsLeft = remainingSeconds % 60;
+  const progressPercentage = ((TOTAL_SECONDS - remainingSeconds) / TOTAL_SECONDS) * 100;
 
-  const getActiveBlock = () => {
-    // Arbitrary splits for the 2h50m block
-    const elapsedMinutes = TOTAL_MINUTES - minutesLeft;
+  const getActiveBlock = useCallback(() => {
+    const elapsedMinutes = Math.floor((TOTAL_SECONDS - remainingSeconds) / 60);
     if (elapsedMinutes < 90) return 'CÉGEP - Sciences';
     if (elapsedMinutes < 140) return 'Cadet Theory';
     return 'Chess Calculation';
-  };
+  }, [remainingSeconds]);
 
   const toggleTimer = () => setIsRunning(!isRunning);
 

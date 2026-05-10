@@ -75,15 +75,17 @@ export class RunnaService {
 
       case 'Build':
         // Light Aerobic only, session length reduced
+        modified.originalType = workout.type;
+        modified.durationMinutes = Math.floor(workout.durationMinutes * 0.8); // -20% duration
+        modified.isModified = true;
         if (workout.type === 'Intervals' || workout.type === 'Tempo') {
-          modified.originalType = workout.type;
           modified.type = 'Easy';
           modified.title = 'Zone 2 Recovery Run';
           modified.intensityTarget = 'Zone 2 (Light Aerobic)';
-          modified.isModified = true;
-          modified.overrideReason = 'Readiness: BUILD. High-intensity swapped to Z2.';
+          modified.overrideReason = 'Readiness: BUILD. High-intensity swapped to Z2, duration -20%.';
+        } else {
+          modified.overrideReason = 'Readiness: BUILD. Duration reduced by 20%.';
         }
-        modified.durationMinutes = Math.floor(workout.durationMinutes * 0.8); // -20% duration
         break;
 
       case 'Caution':

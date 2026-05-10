@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface PVTResult {
@@ -14,9 +14,12 @@ interface PVTTestProps {
 
 export const PVTTest: React.FC<PVTTestProps> = ({ onComplete, testDurationMs = 30000 }) => {
   const [isRunning, setIsRunning] = useState(false);
-  const [waitingForStimulus, setWaitingForStimulus] = useState(false);
-  const [stimulusActive, setStimulusActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(testDurationMs / 1000);
+  
+  // Use refs for all mutable state that needs to be read inside event handlers
+  // to avoid stale closure issues with React state
+  const phaseRef = useRef<'idle' | 'waiting' | 'stimulus'>('idle');
+  const [displayPhase, setDisplayPhase] = useState<'idle' | 'waiting' | 'stimulus'>('idle');
   
   // Stats
   const reactionTimes = useRef<number[]>([]);
@@ -24,69 +27,31 @@ export const PVTTest: React.FC<PVTTestProps> = ({ onComplete, testDurationMs = 3
   const falseStarts = useRef(0);
   
   // Timers and Timestamps
-  const stimulusTimeout = useRef<NodeJS.Timeout | null>(null);
-  const testTimer = useRef<NodeJS.Timeout | null>(null);
-  const countdownInterval = useRef<NodeJS.Timeout | null>(null);
+  const stimulusTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const testTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const stimulusStartTime = useRef<number>(0);
+  const isRunningRef = useRef(false);
 
-  const startTest = () => {
-    setIsRunning(true);
-    reactionTimes.current = [];
-    lapses.current = 0;
-    falseStarts.current = 0;
-    setTimeLeft(testDurationMs / 1000);
-
-    testTimer.current = setTimeout(finishTest, testDurationMs);
-    countdownInterval.current = setInterval(() => {
-      setTimeLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
-
-    scheduleNextStimulus();
-  };
-
-  const scheduleNextStimulus = () => {
-    setStimulusActive(false);
-    setWaitingForStimulus(true);
-    
-    // Random delay between 2 to 5 seconds
-    const delay = Math.random() * 3000 + 2000;
-    stimulusTimeout.current = setTimeout(() => {
-      setWaitingForStimulus(false);
-      setStimulusActive(true);
-      stimulusStartTime.current = Date.now();
-    }, delay);
-  };
-
-  const handleTap = () => {
-    if (!isRunning) return;
-
-    if (waitingForStimulus) {
-      // False start
-      falseStarts.current += 1;
-      clearTimeout(stimulusTimeout.current as NodeJS.Timeout);
-      scheduleNextStimulus();
-    } else if (stimulusActive) {
-      // Valid tap
-      const reactionTime = Date.now() - stimulusStartTime.current;
-      reactionTimes.current.push(reactionTime);
-      
-      if (reactionTime > 500) {
-        lapses.current += 1;
-      }
-      
-      setStimulusActive(false);
-      scheduleNextStimulus();
-    }
-  };
-
-  const finishTest = () => {
-    setIsRunning(false);
-    setStimulusActive(false);
-    setWaitingForStimulus(false);
-    
+  const clearAllTimers = useCallback(() => {
     if (stimulusTimeout.current) clearTimeout(stimulusTimeout.current);
     if (testTimer.current) clearTimeout(testTimer.current);
     if (countdownInterval.current) clearInterval(countdownInterval.current);
+    stimulusTimeout.current = null;
+    testTimer.current = null;
+    countdownInterval.current = null;
+  }, []);
+
+  const setPhase = useCallback((phase: 'idle' | 'waiting' | 'stimulus') => {
+    phaseRef.current = phase;
+    setDisplayPhase(phase);
+  }, []);
+
+  const finishTest = useCallback(() => {
+    isRunningRef.current = false;
+    setIsRunning(false);
+    setPhase('idle');
+    clearAllTimers();
 
     const avgRT = reactionTimes.current.length > 0
       ? reactionTimes.current.reduce((a, b) => a + b, 0) / reactionTimes.current.length
@@ -97,15 +62,64 @@ export const PVTTest: React.FC<PVTTestProps> = ({ onComplete, testDurationMs = 3
       lapses: lapses.current,
       falseStarts: falseStarts.current,
     });
-  };
+  }, [onComplete, clearAllTimers, setPhase]);
+
+  const scheduleNextStimulus = useCallback(() => {
+    if (!isRunningRef.current) return;
+    
+    setPhase('waiting');
+    
+    // Random delay between 2 to 5 seconds
+    const delay = Math.random() * 3000 + 2000;
+    stimulusTimeout.current = setTimeout(() => {
+      if (!isRunningRef.current) return;
+      setPhase('stimulus');
+      stimulusStartTime.current = Date.now();
+    }, delay);
+  }, [setPhase]);
+
+  const startTest = useCallback(() => {
+    reactionTimes.current = [];
+    lapses.current = 0;
+    falseStarts.current = 0;
+    isRunningRef.current = true;
+    setIsRunning(true);
+    setTimeLeft(testDurationMs / 1000);
+
+    testTimer.current = setTimeout(finishTest, testDurationMs);
+    countdownInterval.current = setInterval(() => {
+      setTimeLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+
+    scheduleNextStimulus();
+  }, [testDurationMs, finishTest, scheduleNextStimulus]);
+
+  const handleTap = useCallback(() => {
+    if (!isRunningRef.current) return;
+
+    const currentPhase = phaseRef.current;
+
+    if (currentPhase === 'waiting') {
+      // False start — tapped before stimulus appeared
+      falseStarts.current += 1;
+      if (stimulusTimeout.current) clearTimeout(stimulusTimeout.current);
+      scheduleNextStimulus();
+    } else if (currentPhase === 'stimulus') {
+      // Valid tap — measure reaction time
+      const reactionTime = Date.now() - stimulusStartTime.current;
+      reactionTimes.current.push(reactionTime);
+      
+      if (reactionTime > 500) {
+        lapses.current += 1;
+      }
+      
+      scheduleNextStimulus();
+    }
+  }, [scheduleNextStimulus]);
 
   useEffect(() => {
-    return () => {
-      if (stimulusTimeout.current) clearTimeout(stimulusTimeout.current);
-      if (testTimer.current) clearTimeout(testTimer.current);
-      if (countdownInterval.current) clearInterval(countdownInterval.current);
-    };
-  }, []);
+    return clearAllTimers;
+  }, [clearAllTimers]);
 
   if (!isRunning) {
     return (
@@ -124,12 +138,12 @@ export const PVTTest: React.FC<PVTTestProps> = ({ onComplete, testDurationMs = 3
   return (
     <TouchableOpacity 
       activeOpacity={1} 
-      style={[styles.testArea, stimulusActive ? styles.stimulusActive : styles.waiting]} 
+      style={[styles.testArea, displayPhase === 'stimulus' ? styles.stimulusActive : styles.waiting]} 
       onPress={handleTap}
     >
       <Text style={styles.timerText}>{timeLeft}s</Text>
-      {stimulusActive && <Text style={styles.tapText}>TAP!</Text>}
-      {waitingForStimulus && <Text style={styles.waitText}>Wait...</Text>}
+      {displayPhase === 'stimulus' && <Text style={styles.tapText}>TAP!</Text>}
+      {displayPhase === 'waiting' && <Text style={styles.waitText}>Wait...</Text>}
     </TouchableOpacity>
   );
 };

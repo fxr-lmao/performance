@@ -58,7 +58,7 @@ export class ExportService {
       const canShare = await Sharing.isAvailableAsync();
       if (canShare) {
         await Sharing.shareAsync(uri, {
-          UTI: '.pdf',
+          UTI: 'com.adobe.pdf',
           mimeType: 'application/pdf'
         });
       } else {

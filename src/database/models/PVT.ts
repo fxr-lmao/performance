@@ -1,5 +1,5 @@
 import { Model } from '@nozbe/watermelondb'
-import { field, date, relation } from '@nozbe/watermelondb/decorators'
+import { field, date } from '@nozbe/watermelondb/decorators'
 
 export default class PVT extends Model {
   static table = 'pvts'
