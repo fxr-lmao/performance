@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { PVTTest } from '../components/PVTTest';
+import { PVTTest, PVTResult } from '../components/PVTTest';
 import { calculateReadiness, ReadinessResult } from '../utils/readiness';
 import { RunnaService, OverriddenWorkout } from '../services/runna';
 import { AcademicService } from '../services/academic';
@@ -17,33 +17,38 @@ export const MorningBriefing: React.FC<MorningBriefingProps> = ({ onFinish }) =>
   const [pvtStats, setPvtStats] = useState<{rt: number, lapses: number, falseStarts: number} | null>(null);
   const [workout, setWorkout] = useState<OverriddenWorkout | null>(null);
 
-  const handlePVTComplete = async (result: any) => {
-    setPvtStats({
-      rt: result.averageReactionTime,
-      lapses: result.lapses,
-      falseStarts: result.falseStarts
-    });
+  const handlePVTComplete = async (result: PVTResult) => {
+    try {
+      setPvtStats({
+        rt: result.averageReactionTime,
+        lapses: result.lapses,
+        falseStarts: result.falseStarts
+      });
 
-    const mockInputs = {
-      hrvDelta: 85,
-      sleepScore: 90,
-      tsbNorm: 75,
-      pvtDelta: result.averageReactionTime < 250 ? 95 : 70, // Simplistic conversion
-      rpeInv: 80
-    };
+      const mockInputs = {
+        hrvDelta: 85,
+        sleepScore: 90,
+        tsbNorm: 75,
+        pvtDelta: result.averageReactionTime < 250 ? 95 : 70, // Simplistic conversion
+        rpeInv: 80
+      };
 
-    const readinessResult = calculateReadiness(mockInputs);
-    setReadiness(readinessResult);
+      const readinessResult = calculateReadiness(mockInputs);
+      setReadiness(readinessResult);
 
-    // Academic / 72h Exam Rule Check
-    const examContext = await AcademicService.isExamWithin72h();
+      // Academic / 72h Exam Rule Check
+      const examContext = await AcademicService.isExamWithin72h();
 
-    // Fetch and Override Plan
-    const planned = await RunnaService.fetchTodayPlan();
-    const overridden = RunnaService.applyReadinessOverride(planned, readinessResult.state, examContext);
-    setWorkout(overridden);
+      // Fetch and Override Plan
+      const planned = await RunnaService.fetchTodayPlan();
+      const overridden = RunnaService.applyReadinessOverride(planned, readinessResult.state, examContext);
+      setWorkout(overridden);
 
-    setStep('results');
+      setStep('results');
+    } catch (error) {
+      console.error('Failed to process PVT results:', error);
+      // fallback step back or show error
+    }
   };
 
   const getIntensityText = (state: string) => {

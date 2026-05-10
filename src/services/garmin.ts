@@ -1,4 +1,5 @@
 import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
 
 /**
  * Garmin Health SDK & OAuth Configuration
@@ -28,7 +29,7 @@ export class GarminService {
 
     try {
       // Use openAuthSessionAsync instead of the deprecated startAsync
-      const result = await AuthSession.openAuthSessionAsync(authUrl, redirectUri);
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
       if (result.type === 'success' && result.url) {
         // Parse the oauth_token from the redirect URL
         const params = new URLSearchParams(result.url.split('?')[1] || '');

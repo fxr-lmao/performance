@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-interface PVTResult {
+export interface PVTResult {
   averageReactionTime: number;
   lapses: number;
   falseStarts: number;

@@ -31,9 +31,12 @@ export const DeepWorkTimer: React.FC<DeepWorkTimerProps> = ({ onFinish }) => {
     };
   }, [isRunning]); // Only depend on isRunning — remainingSeconds is handled via functional updater
 
-  const minutesLeft = Math.floor(remainingSeconds / 60);
-  const secondsLeft = remainingSeconds % 60;
-  const progressPercentage = ((TOTAL_SECONDS - remainingSeconds) / TOTAL_SECONDS) * 100;
+  // Auto‑navigate when timer expires
+  useEffect(() => {
+    if (remainingSeconds === 0 && onFinish) {
+      onFinish();
+    }
+  }, [remainingSeconds, onFinish]);
 
   const getActiveBlock = useCallback(() => {
     const elapsedMinutes = Math.floor((TOTAL_SECONDS - remainingSeconds) / 60);
@@ -43,6 +46,10 @@ export const DeepWorkTimer: React.FC<DeepWorkTimerProps> = ({ onFinish }) => {
   }, [remainingSeconds]);
 
   const toggleTimer = () => setIsRunning(!isRunning);
+
+  const minutesLeft = Math.floor(remainingSeconds / 60);
+  const secondsLeft = remainingSeconds % 60;
+  const progressPercentage = ((TOTAL_SECONDS - remainingSeconds) / TOTAL_SECONDS) * 100;
 
   return (
     <SafeAreaView style={styles.container}>
