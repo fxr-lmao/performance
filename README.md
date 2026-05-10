@@ -106,9 +106,9 @@ $$Score = 0.28 \cdot HRV_{\Delta} + 0.25 \cdot SleepScore + 0.20 \cdot TSB_{norm
 - [x] Create the Deep Work timer/tracker.
 
 ### Phase 5: Pilot Log & Certification
-- [ ] Build long-term trend graphs (10-year database visualization).
-- [ ] Implement PDF Export for the official RCAF Application Dossier.
-- [ ] Final UI Polish (Premium Dark Mode Aesthetics).
+- [x] Build long-term trend graphs (10-year database visualization).
+- [x] Implement PDF Export for the official RCAF Application Dossier.
+- [x] Final UI Polish (Premium Dark Mode Aesthetics).
 
 ---
 *Created with focus and discipline for the future of aviation.*

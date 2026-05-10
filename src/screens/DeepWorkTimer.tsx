@@ -3,7 +3,11 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-na
 
 const TOTAL_MINUTES = 170; // 2h50m (06:10 to 09:00)
 
-export const DeepWorkTimer: React.FC = () => {
+interface DeepWorkTimerProps {
+  onFinish?: () => void;
+}
+
+export const DeepWorkTimer: React.FC<DeepWorkTimerProps> = ({ onFinish }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [minutesLeft, setMinutesLeft] = useState(TOTAL_MINUTES);
   const [secondsLeft, setSecondsLeft] = useState(0);
@@ -67,6 +71,9 @@ export const DeepWorkTimer: React.FC = () => {
           onPress={toggleTimer}
         >
           <Text style={styles.buttonText}>{isRunning ? 'PAUSE' : 'ENGAGE'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.logButton} onPress={onFinish}>
+          <Text style={styles.logButtonText}>VIEW PILOT LOG</Text>
         </TouchableOpacity>
       </View>
 
@@ -175,6 +182,17 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 2,
     color: '#000000',
+  },
+  logButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+  },
+  logButtonText: {
+    color: '#888888',
+    fontSize: 14,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textDecorationLine: 'underline',
   },
   tasksContainer: {
     backgroundColor: '#111111',
