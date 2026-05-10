@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { PVTTest } from '../components/PVTTest';
 import { calculateReadiness, ReadinessResult } from '../utils/readiness';
+import { RunnaService, OverriddenWorkout } from '../services/runna';
 
 type BriefingStep = 'intro' | 'pvt' | 'results';
 
@@ -9,8 +10,9 @@ export const MorningBriefing: React.FC = () => {
   const [step, setStep] = useState<BriefingStep>('intro');
   const [readiness, setReadiness] = useState<ReadinessResult | null>(null);
   const [pvtStats, setPvtStats] = useState<{rt: number, lapses: number, falseStarts: number} | null>(null);
+  const [workout, setWorkout] = useState<OverriddenWorkout | null>(null);
 
-  const handlePVTComplete = (result: any) => {
+  const handlePVTComplete = async (result: any) => {
     setPvtStats({
       rt: result.averageReactionTime,
       lapses: result.lapses,
@@ -28,6 +30,12 @@ export const MorningBriefing: React.FC = () => {
 
     const readinessResult = calculateReadiness(mockInputs);
     setReadiness(readinessResult);
+
+    // Fetch and Override Plan
+    const planned = await RunnaService.fetchTodayPlan();
+    const overridden = RunnaService.applyReadinessOverride(planned, readinessResult.state);
+    setWorkout(overridden);
+
     setStep('results');
   };
 
@@ -77,6 +85,16 @@ export const MorningBriefing: React.FC = () => {
             <Text style={styles.detailsTitle}>Directive for Today:</Text>
             <Text style={styles.detailsText}>{getIntensityText(readiness.state)}</Text>
             
+            {workout && (
+              <View style={styles.workoutBox}>
+                <Text style={styles.workoutTitle}>🏋️ {workout.title} ({workout.durationMinutes} min)</Text>
+                <Text style={styles.workoutText}>Target: {workout.intensityTarget}</Text>
+                {workout.isModified && (
+                  <Text style={styles.overrideReason}>⚠️ {workout.overrideReason}</Text>
+                )}
+              </View>
+            )}
+
             <View style={styles.divider} />
             
             <Text style={styles.detailsTitle}>PVT Diagnostics:</Text>
@@ -197,6 +215,29 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     marginBottom: 5,
+  },
+  workoutBox: {
+    backgroundColor: '#262626',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  workoutTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  workoutText: {
+    color: '#a0a0a0',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  overrideReason: {
+    color: '#f59e0b',
+    fontSize: 12,
+    fontStyle: 'italic',
+    marginTop: 5,
   },
   divider: {
     height: 1,

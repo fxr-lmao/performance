@@ -96,9 +96,9 @@ $$Score = 0.28 \cdot HRV_{\Delta} + 0.25 \cdot SleepScore + 0.20 \cdot TSB_{norm
 - [x] Create the Daily Morning Briefing UI.
 
 ### Phase 3: Training & Performance
-- [ ] Integrate FIT file parsing (TSB calculation).
-- [ ] Implement Runna API/Plan integration.
-- [ ] Build the "Plan Override" system based on Readiness.
+- [x] Integrate FIT file parsing (TSB calculation).
+- [x] Implement Runna API/Plan integration.
+- [x] Build the "Plan Override" system based on Readiness.
 
 ### Phase 4: Academic Integration
 - [ ] Integrate School Calendar (ICS/CalDAV).
