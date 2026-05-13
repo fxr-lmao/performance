@@ -29,6 +29,7 @@ const PVT = {
   setMode(m) {
     if (this._state !== 'idle') return;
     this.mode = m;
+    const isFR = App._lang === 'fr';
     const vBtn = document.getElementById('mode-visual');
     const aBtn = document.getElementById('mode-audio');
     if (vBtn && aBtn) {
@@ -36,7 +37,9 @@ const PVT = {
       aBtn.className = m === 'audio' ? 'btn btn-primary' : 'btn btn-ghost';
     }
     const sub = document.getElementById('pvt-circle-sub');
-    if (sub) sub.textContent = m === 'visual' ? 'Tap when the circle turns green' : 'Tap when you hear the beep';
+    if (sub) sub.textContent = m === 'visual' 
+      ? (isFR ? 'Appuyez quand le cercle devient vert' : 'Tap when the circle turns green') 
+      : (isFR ? 'Appuyez quand vous entendez le bip' : 'Tap when you hear the beep');
   },
 
   _playBeep() {
@@ -51,47 +54,48 @@ const PVT = {
   },
 
   render() {
+    const isFR = App._lang === 'fr';
     return `
     <div class="page-header">
-      <div class="page-title">PVT <span>Test</span></div>
-      <div class="page-sub">Psychomotor Vigilance Test · 10-trial CNS diagnostic</div>
+      <div class="page-title">${App.t('pvt_test')}</div>
+      <div class="page-sub">${isFR ? 'Test de vigilance psychomotrice · Diagnostic SNC 10 essais' : 'Psychomotor Vigilance Test · 10-trial CNS diagnostic'}</div>
     </div>
     
     <div style="display:flex;gap:12px;margin-bottom:24px;justify-content:center">
-      <button id="mode-visual" class="btn btn-primary" onclick="PVT.setMode('visual')">👁️ Visual Test</button>
-      <button id="mode-audio" class="btn btn-ghost" onclick="PVT.setMode('audio')">🎧 Auditory Test</button>
+      <button id="mode-visual" class="btn btn-primary" onclick="PVT.setMode('visual')">👁️ ${isFR ? 'Test Visuel' : 'Visual Test'}</button>
+      <button id="mode-audio" class="btn btn-ghost" onclick="PVT.setMode('audio')">🎧 ${isFR ? 'Test Auditif' : 'Auditory Test'}</button>
     </div>
 
     <div class="pvt-arena">
       <div class="pvt-circle waiting" id="pvt-circle" onclick="PVT._tap()">
-        <div class="pvt-circle-text" id="pvt-circle-text">TAP TO BEGIN</div>
-        <div class="pvt-circle-sub" id="pvt-circle-sub">Tap when the circle turns green</div>
+        <div class="pvt-circle-text" id="pvt-circle-text">${isFR ? 'TAPPER POUR COMMENCER' : 'TAP TO BEGIN'}</div>
+        <div class="pvt-circle-sub" id="pvt-circle-sub">${isFR ? 'Appuyez quand le cercle devient vert' : 'Tap when the circle turns green'}</div>
       </div>
 
       <div style="width:100%">
-        <div class="card-title">Trial Progress</div>
+        <div class="card-title">${isFR ? 'Progression des Essais' : 'Trial Progress'}</div>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="pvt-progress" style="width:0%"></div></div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <span style="font-size:12px;color:var(--text3)" id="pvt-trial-count">0 / 10 trials</span>
+          <span style="font-size:12px;color:var(--text3)" id="pvt-trial-count">0 / 10 ${isFR ? 'essais' : 'trials'}</span>
           <span style="font-size:12px;color:var(--text3)" id="pvt-last-rt">—</span>
         </div>
       </div>
 
       <div class="pvt-results-grid" id="pvt-results-grid" style="display:none">
-        <div class="stat-box"><div class="stat-label">Avg RT</div><div class="stat-value" id="pvt-avg">—</div><div class="stat-unit">ms</div></div>
-        <div class="stat-box"><div class="stat-label">Lapses</div><div class="stat-value" id="pvt-lapses">—</div><div class="stat-unit">&gt;500ms</div></div>
-        <div class="stat-box"><div class="stat-label">False Starts</div><div class="stat-value" id="pvt-false">—</div><div class="stat-unit">premature</div></div>
+        <div class="stat-box"><div class="stat-label">${App.t('avg_rt')}</div><div class="stat-value" id="pvt-avg">—</div><div class="stat-unit">ms</div></div>
+        <div class="stat-box"><div class="stat-label">${App.t('lapses')}</div><div class="stat-value" id="pvt-lapses">—</div><div class="stat-unit">&gt;500ms</div></div>
+        <div class="stat-box"><div class="stat-label">${App.t('false_starts')}</div><div class="stat-value" id="pvt-false">—</div><div class="stat-unit">${isFR ? 'prématuré' : 'premature'}</div></div>
       </div>
 
       <button class="btn btn-primary" id="pvt-next-btn" style="display:none" onclick="PVT._finish()">
-        Calculate Readiness →
+        ${isFR ? 'Calculer l\'État →' : 'Calculate Readiness →'}
       </button>
     </div>`;
   },
 
   afterRender() {
     this.reset();
-    this.setMode(this.mode); // Restore visual state of buttons
+    this.setMode(this.mode);
   },
 
   _tap() {
@@ -104,14 +108,15 @@ const PVT = {
   _startTest() {
     this._state = 'countdown';
     let c = 3;
-    this._setCircle('waiting', `${c}`, 'Get ready…');
+    const isFR = App._lang === 'fr';
+    this._setCircle('waiting', `${c}`, isFR ? 'Préparez-vous…' : 'Get ready…');
     this._countdownTimer = setInterval(() => {
       c--;
       if (c <= 0) {
         clearInterval(this._countdownTimer);
         this._nextTrial();
       } else {
-        this._setCircle('waiting', `${c}`, 'Get ready…');
+        this._setCircle('waiting', `${c}`, isFR ? 'Préparez-vous…' : 'Get ready…');
       }
     }, 1000);
   },
@@ -119,21 +124,20 @@ const PVT = {
   _nextTrial() {
     if (this._trials.length >= this._maxTrials) { this._showFinalResults(); return; }
     this._state = 'waiting';
-    this._setCircle('waiting', 'WAIT', 'Do not tap yet…');
+    const isFR = App._lang === 'fr';
+    this._setCircle('waiting', isFR ? 'ATTENDEZ' : 'WAIT', isFR ? 'Ne tappez pas encore…' : 'Do not tap yet…');
     const delay = this._waitMin + Math.random() * (this._waitMax - this._waitMin);
     this._stimulusTimer = setTimeout(() => {
       if (this._state !== 'waiting') return;
       this._state = 'ready';
       this._stimulusStart = performance.now();
       if (this.mode === 'visual') {
-        this._setCircle('ready', 'TAP!', 'Tap now!');
+        this._setCircle('ready', isFR ? 'TAP!' : 'TAP!', isFR ? 'Tappez maintenant!' : 'Tap now!');
       } else {
-        this._setCircle('ready', 'BEEP!', 'Tap now!');
+        this._setCircle('ready', 'BEEP!', isFR ? 'Tappez maintenant!' : 'Tap now!');
         document.getElementById('pvt-circle').style.borderColor = 'var(--accent)';
-        document.getElementById('pvt-circle').style.background = 'rgba(124, 92, 252, 0.2)';
         this._playBeep();
       }
-      // Auto-lapse after 2s
       this._testTimer = setTimeout(() => {
         if (this._state === 'ready') { this._recordLapse(); }
       }, 2000);
@@ -144,7 +148,8 @@ const PVT = {
     this._falseStarts++;
     clearTimeout(this._stimulusTimer);
     this._state = 'result';
-    this._setCircle('too-early', '⚡ Early!', 'Wait for green');
+    const isFR = App._lang === 'fr';
+    this._setCircle('too-early', isFR ? '⚡ Tôt!' : '⚡ Early!', isFR ? 'Attendez le vert' : 'Wait for green');
     setTimeout(() => this._nextTrial(), 1200);
   },
 
@@ -152,16 +157,18 @@ const PVT = {
     clearTimeout(this._testTimer);
     const rt = Math.round(performance.now() - this._stimulusStart);
     this._trials.push(rt);
+    const isFR = App._lang === 'fr';
     if (rt > 500) this._lapses++;
     this._state = 'result';
     const color = rt < 250 ? 'var(--green)' : rt < 350 ? 'var(--yellow)' : 'var(--red)';
-    document.getElementById('pvt-circle').className = 'pvt-circle result';
-    document.getElementById('pvt-circle').style.borderColor = color;
+    const el = document.getElementById('pvt-circle');
+    el.className = 'pvt-circle result';
+    el.style.borderColor = color;
     document.getElementById('pvt-circle-text').innerHTML = `<span style="font-size:48px;font-weight:900;color:${color}">${rt}</span>`;
-    document.getElementById('pvt-circle-sub').textContent = 'ms · tap to continue';
-    document.getElementById('pvt-last-rt').textContent = `Last: ${rt} ms`;
+    document.getElementById('pvt-circle-sub').textContent = isFR ? 'ms · tapper pour continuer' : 'ms · tap to continue';
+    document.getElementById('pvt-last-rt').textContent = `${isFR ? 'Dernier' : 'Last'}: ${rt} ms`;
     const n = this._trials.length;
-    document.getElementById('pvt-trial-count').textContent = `${n} / ${this._maxTrials} trials`;
+    document.getElementById('pvt-trial-count').textContent = `${n} / ${this._maxTrials} ${isFR ? 'essais' : 'trials'}`;
     document.getElementById('pvt-progress').style.width = `${(n / this._maxTrials) * 100}%`;
     if (n >= this._maxTrials) {
       setTimeout(() => this._showFinalResults(), 800);
@@ -179,7 +186,8 @@ const PVT = {
   _showFinalResults() {
     this._state = 'done';
     const avg = Math.round(this._trials.reduce((a, b) => a + b, 0) / this._trials.length);
-    this._setCircle('ready', `${avg}ms`, 'Avg Reaction Time');
+    const isFR = App._lang === 'fr';
+    this._setCircle('ready', `${avg}ms`, isFR ? 'Temps de réaction moyen' : 'Avg Reaction Time');
     document.getElementById('pvt-results-grid').style.display = 'grid';
     document.getElementById('pvt-avg').textContent = avg;
     document.getElementById('pvt-lapses').textContent = this._lapses;
@@ -191,10 +199,8 @@ const PVT = {
   _finish() {
     const r = this._lastResult;
     if (!r) return;
-    // Save to DB
     DB.push('pvt_history', { date: DB.today(), mode: this.mode, ...r, timestamp: Date.now() });
     DB.addXP(100, `PVT Diagnostic (${this.mode})`);
-    // Navigate to briefing results
     App.navigate('briefing', { pvtResult: r });
   },
 

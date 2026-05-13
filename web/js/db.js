@@ -26,11 +26,19 @@ const DB = {
   },
 
   addXP(amount, reason) {
+    const status = (window.Readiness && Readiness.getStatus) ? Readiness.getStatus() : { multiplier: 1.0, isGrounded: false };
+    const modifiedAmount = Math.round(amount * status.multiplier);
+    
     let xp = parseInt(this.get('total_xp', 0)) || 0;
-    xp += amount;
+    xp += modifiedAmount;
     this.set('total_xp', xp);
+    
     if (window.App && App.toast) {
-      App.toast(`+${amount} XP: ${reason}`, 'success');
+      let msg = `+${modifiedAmount} XP: ${reason}`;
+      if (status.isGrounded) msg += ' (GROUNDED −50%)';
+      else if (status.multiplier > 1.0) msg += ' (PEAK +20%)';
+      
+      App.toast(msg, status.isGrounded ? 'warning' : 'success');
       if (App.updateXP) App.updateXP();
     }
   },

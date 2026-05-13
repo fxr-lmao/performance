@@ -73,9 +73,9 @@ const Tactical = {
         document.getElementById('math-container').innerHTML = `
           <div style="text-align:center">
             <div style="font-size:48px;margin-bottom:8px">🧠</div>
-            <div style="font-size:24px;font-weight:700;color:var(--green)">Passed!</div>
+            <div style="font-size:24px;font-weight:700;color:var(--green)">${App.t('passed')}</div>
             <div style="font-size:14px;color:var(--text2);margin-top:8px">Time: ${elapsed}s</div>
-            <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.initMath()">Retry</button>
+            <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.initMath()">${App.t('retry')}</button>
           </div>
         `;
         DB.push('math_history', { date: DB.today(), time: parseFloat(elapsed), timestamp: Date.now() });
@@ -89,17 +89,16 @@ const Tactical = {
     }
   },
 
-  // NEW TEST: Digit Span Recall
   _digitSequence: '',
   startDigitSpan() {
     this._digitSequence = Array.from({length: 6}, () => Math.floor(Math.random() * 10)).join('');
     document.getElementById('digit-container').innerHTML = `
       <div style="font-size:48px;font-weight:900;letter-spacing:8px;text-align:center;color:var(--accent)">${this._digitSequence}</div>
-      <div style="text-align:center;color:var(--text3);margin-top:16px">Memorize this sequence (2.5s)</div>
+      <div style="text-align:center;color:var(--text3);margin-top:16px">${App._lang === 'fr' ? 'Mémorisez cette séquence (2.5s)' : 'Memorize this sequence (2.5s)'}</div>
     `;
     setTimeout(() => {
       document.getElementById('digit-container').innerHTML = `
-        <div style="font-size:18px;font-weight:700;margin-bottom:16px;text-align:center">Enter the sequence</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:16px;text-align:center">${App._lang === 'fr' ? 'Entrez la séquence' : 'Enter the sequence'}</div>
         <input type="number" id="digit-input" class="form-input" style="font-size:24px;letter-spacing:8px;text-align:center" autofocus onkeyup="if(event.key==='Enter') Tactical.checkDigitSpan()">
       `;
       setTimeout(() => document.getElementById('digit-input')?.focus(), 50);
@@ -112,15 +111,15 @@ const Tactical = {
       document.getElementById('digit-container').innerHTML = `
         <div style="text-align:center">
           <div style="font-size:48px;margin-bottom:8px">👁️</div>
-          <div style="font-size:24px;font-weight:700;color:var(--green)">Perfect Recall!</div>
-          <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.startDigitSpan()">Retry</button>
+          <div style="font-size:24px;font-weight:700;color:var(--green)">${App.t('perfect_recall')}</div>
+          <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.startDigitSpan()">${App.t('retry')}</button>
         </div>
       `;
       DB.push('digit_history', { date: DB.today(), passed: 1, length: this._digitSequence.length, timestamp: Date.now() });
       DB.addXP(75, 'Memory Drill');
     } else {
       document.getElementById('digit-input').style.borderColor = 'var(--red)';
-      App.toast(`Failed. Sequence was: ${this._digitSequence}`, 'error');
+      App.toast(App._lang === 'fr' ? `Échoué. La séquence était : ${this._digitSequence}` : `Failed. Sequence was: ${this._digitSequence}`, 'error');
       setTimeout(() => { this.startDigitSpan(); }, 2000);
       DB.push('digit_history', { date: DB.today(), passed: 0, length: this._digitSequence.length, timestamp: Date.now() });
     }
@@ -131,8 +130,8 @@ const Tactical = {
     document.getElementById('sop-display').innerHTML = `
       <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:16px;text-align:center">${sop}</div>
       <div style="display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-primary" onclick="Tactical.logSOP('${sop}', 'pass')">Passed</button>
-        <button class="btn btn-danger" onclick="Tactical.logSOP('${sop}', 'fail')">Failed</button>
+        <button class="btn btn-primary" onclick="Tactical.logSOP('${sop}', 'pass')">${App._lang === 'fr' ? 'Passé' : 'Passed'}</button>
+        <button class="btn btn-danger" onclick="Tactical.logSOP('${sop}', 'fail')">${App._lang === 'fr' ? 'Échoué' : 'Failed'}</button>
       </div>
     `;
   },
@@ -142,12 +141,11 @@ const Tactical = {
     if (result === 'pass') DB.addXP(20, 'SOP Mastery');
     App.toast(`SOP Recall: ${result.toUpperCase()}`, result === 'pass' ? 'success' : 'error');
     document.getElementById('sop-display').innerHTML = `
-      <div style="text-align:center;color:var(--text3);font-size:13px">Log recorded. Roll again?</div>
-      <button class="btn btn-ghost btn-full" style="margin-top:16px" onclick="Tactical.rollSOP()">🎲 Random Recall</button>
+      <div style="text-align:center;color:var(--text3);font-size:13px">${App.t('log_recorded')} ${App.t('roll_again')}</div>
+      <button class="btn btn-ghost btn-full" style="margin-top:16px" onclick="Tactical.rollSOP()">🎲 ${App.t('random_recall')}</button>
     `;
   },
 
-  // NEW TEST: Spatial Bearing Drill
   _spatialTimer: null,
   _spatialStartTime: null,
   _spatialQuestions: [],
@@ -177,12 +175,12 @@ const Tactical = {
     const q = this._spatialQuestions[this._currentSpatialIndex];
     const html = `
       <div style="font-size:18px;font-weight:700;margin-bottom:12px;text-align:center;color:var(--text2)">
-        Flying Heading <span style="color:var(--accent);font-size:24px">${q.h.toString().padStart(3, '0')}°</span>
+        ${App._lang === 'fr' ? 'Cap Actuel' : 'Flying Heading'} <span style="color:var(--accent);font-size:24px">${q.h.toString().padStart(3, '0')}°</span>
       </div>
       <div style="font-size:18px;font-weight:700;margin-bottom:16px;text-align:center;color:var(--text2)">
-        Target at <span style="color:var(--orange);font-size:24px">${q.clock} o'clock</span>
+        ${App._lang === 'fr' ? 'Cible à' : 'Target at'} <span style="color:var(--orange);font-size:24px">${q.clock} ${App._lang === 'fr' ? 'heures' : "o'clock"}</span>
       </div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:12px;text-align:center">What is the Target Heading?</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px;text-align:center">${App._lang === 'fr' ? 'Quel est le gisement de la cible ?' : 'What is the Target Heading?'}</div>
       <input type="number" id="spatial-input" class="form-input" style="font-size:24px;text-align:center" autofocus onkeyup="if(event.key==='Enter') Tactical._checkSpatial()">
       <div style="display:flex;justify-content:space-between;margin-top:16px">
         <span style="font-size:12px;color:var(--text3)">Q: ${this._currentSpatialIndex + 1} / 5</span>
@@ -197,7 +195,6 @@ const Tactical = {
     const input = document.getElementById('spatial-input').value;
     if (!input) return;
     const q = this._spatialQuestions[this._currentSpatialIndex];
-    // Allow inputs with leading zeros like "090" but parseInt handles that natively
     if (parseInt(input) === q.ans) {
       this._currentSpatialIndex++;
       if (this._currentSpatialIndex >= 5) {
@@ -206,9 +203,9 @@ const Tactical = {
         document.getElementById('spatial-container').innerHTML = `
           <div style="text-align:center">
             <div style="font-size:48px;margin-bottom:8px">🧭</div>
-            <div style="font-size:24px;font-weight:700;color:var(--green)">Target Locked!</div>
+            <div style="font-size:24px;font-weight:700;color:var(--green)">${App.t('target_locked')}</div>
             <div style="font-size:14px;color:var(--text2);margin-top:8px">Time: ${elapsed}s</div>
-            <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.initSpatial()">Retry</button>
+            <button class="btn btn-ghost" style="margin-top:16px" onclick="Tactical.initSpatial()">${App.t('retry')}</button>
           </div>
         `;
         DB.push('spatial_history', { date: DB.today(), score: parseFloat(elapsed), timestamp: Date.now() });
@@ -234,7 +231,8 @@ const Tactical = {
     DB.push(`subj_${type}_history`, { date: DB.today(), value, timestamp: Date.now() });
     App.toast('Logged successfully', 'success');
     document.querySelectorAll(`.${type}-btn`).forEach(b => b.classList.remove('active'));
-    document.getElementById(`${type}-btn-${value}`).classList.add('active');
+    const btn = document.getElementById(`${type}-btn-${value}`);
+    if (btn) btn.classList.add('active');
   },
   
   saveRPE() {
@@ -260,9 +258,10 @@ const Tactical = {
     let count = parseInt(DB.get(`streak_${DB.today()}`, 0)) || 0;
     count++;
     DB.set(`streak_${DB.today()}`, count);
-    DB.push('distraction_history', { date: DB.today(), blocks: count }); // For graphing
+    DB.push('distraction_history', { date: DB.today(), blocks: count });
     DB.addXP(40, 'Deep Work Block');
-    document.getElementById('distraction-count').textContent = count;
+    const el = document.getElementById('distraction-count');
+    if (el) el.textContent = count;
     App.toast('+1 Distraction-Free Block', 'success');
   },
 
@@ -298,8 +297,12 @@ const Tactical = {
   },
 
   _refreshNoFly() {
+    const isFR = App._lang === 'fr';
     const noFly = DB.get(`nofly_${DB.today()}`, {});
-    const items = ['No sugar', 'No scrolling after 9 PM', 'No snoozing alarm'];
+    const items = isFR 
+        ? ['Pas de sucre', 'Pas d\'écran après 21h', 'Pas de bouton "Snooze"']
+        : ['No sugar', 'No scrolling after 9 PM', 'No snoozing alarm'];
+    
     const html = items.map((item, idx) => `
       <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
         <div style="width:20px;height:20px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:${noFly[idx] ? 'var(--green)' : 'transparent'};border-color:${noFly[idx] ? 'var(--green)' : 'var(--border)'}" onclick="Tactical.toggleNoFly(${idx})">
@@ -320,8 +323,12 @@ const Tactical = {
   },
 
   _refreshGear() {
+    const isFR = App._lang === 'fr';
     const gear = DB.get(`gear_${DB.today()}`, {});
-    const items = ['Uniform Clean & Ironed', 'Boots Polished', 'Cadet/School Bag Staged', 'Water & Rations Prepped'];
+    const items = isFR
+        ? ['Uniforme Propre et Repassé', 'Bottes Cirées', 'Sac de Cadet Prêt', 'Eau et Rations Préparées']
+        : ['Uniform Clean & Ironed', 'Boots Polished', 'Cadet/School Bag Staged', 'Water & Rations Prepped'];
+        
     const html = items.map((item, idx) => `
       <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
         <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:${gear[idx] ? 'var(--accent)' : 'transparent'};border-color:${gear[idx] ? 'var(--accent)' : 'var(--border)'}" onclick="Tactical.toggleGear(${idx})">
@@ -333,8 +340,6 @@ const Tactical = {
     const el = document.getElementById('gear-list');
     if (el) el.innerHTML = html;
   },
-
-  // ── Section 4: Strategic Infrastructure ──
 
   saveKnowledge() {
     const book = document.getElementById('know-book').value.trim();
@@ -357,7 +362,7 @@ const Tactical = {
       </div>
     `).join('');
     const el = document.getElementById('know-list');
-    if (el) el.innerHTML = html || '<div style="color:var(--text3);font-size:12px">No manuals tracked yet.</div>';
+    if (el) el.innerHTML = html || `<div style="color:var(--text3);font-size:12px">${App._lang === 'fr' ? 'Aucun manuel suivi.' : 'No manuals tracked yet.'}</div>`;
   },
 
   saveDecision() {
@@ -378,7 +383,7 @@ const Tactical = {
       </div>
     `).join('');
     const el = document.getElementById('dec-list');
-    if (el) el.innerHTML = html || '<div style="color:var(--text3);font-size:12px">No decisions logged.</div>';
+    if (el) el.innerHTML = html || `<div style="color:var(--text3);font-size:12px">${App._lang === 'fr' ? 'Aucune décision.' : 'No decisions logged.'}</div>`;
   },
 
   saveRunway() {
@@ -393,7 +398,7 @@ const Tactical = {
     if (hist.length > 0) {
       const latest = hist[hist.length-1].days;
       const el = document.getElementById('runway-display');
-      if (el) el.innerHTML = `<span style="font-size:32px;font-weight:900;color:var(--green)">${latest}</span> <span style="color:var(--text3)">Survival Days</span>`;
+      if (el) el.innerHTML = `<span style="font-size:32px;font-weight:900;color:var(--green)">${latest}</span> <span style="color:var(--text3)">${App._lang === 'fr' ? 'Jours de Survie' : 'Survival Days'}</span>`;
     }
   },
 
@@ -405,8 +410,12 @@ const Tactical = {
   },
   _hasSkill(s) { return DB.get('skill_tree', {})[s]; },
   _refreshSkills() {
+    const isFR = App._lang === 'fr';
     const tree = DB.get('skill_tree', {});
-    const skills = ['Basic Flight Dynamics', 'VFR Navigation', 'Advanced IFR', 'Night Ops', 'Combat Maneuvers'];
+    const skills = isFR
+        ? ['Dynamique de Vol de Base', 'Navigation VFR', 'IFR Avancé', 'Opérations Nocturnes', 'Manœuvres de Combat']
+        : ['Basic Flight Dynamics', 'VFR Navigation', 'Advanced IFR', 'Night Ops', 'Combat Maneuvers'];
+        
     const html = skills.map((s, i) => `
       <div style="display:flex;align-items:center;gap:10px;padding:6px 0;opacity:${i > 0 && !this._hasSkill(skills[i-1]) ? 0.4 : 1}">
         <div style="width:16px;height:16px;border:2px solid var(--accent);border-radius:4px;cursor:pointer;background:${tree[s] ? 'var(--accent)' : 'transparent'};display:flex;align-items:center;justify-content:center" onclick="if(${i===0} || Tactical._hasSkill('${skills[i-1]}')) Tactical.toggleSkill('${s}')">
@@ -420,123 +429,106 @@ const Tactical = {
   },
 
   render() {
+    const isFR = App._lang === 'fr';
     return `
     <div class="page-header">
-      <div class="page-title">Operator <span>Hub</span></div>
-      <div class="page-sub">Cognitive & Technical Edge · High-Signal Data Logging</div>
+      <div class="page-title">${App.t('operator_hub')}</div>
+      <div class="page-sub">${isFR ? 'Avantage Cognitif et Technique · Collecte de Données à Haut Signal' : 'Cognitive & Technical Edge · High-Signal Data Logging'}</div>
     </div>
     
     <!-- COGNITIVE & TECHNICAL EDGE -->
     <div class="grid-2" style="gap:24px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Mental Math -->
         <div class="card">
-          <div class="card-title">Mental Math Performance</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">5 rapid-fire calculations. Speed and accuracy under pressure.</div>
-          <div id="math-container" style="background:var(--bg2);padding:24px;border-radius:var(--radius-sm);border:1px solid var(--border)">
-            <button class="btn btn-primary btn-full" onclick="Tactical.initMath()">Start Drill</button>
+          <div class="card-title">${App.t('mental_math')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">${isFR ? '5 calculs rapides. Vitesse et précision sous pression.' : '5 rapid-fire calculations. Speed and accuracy under pressure.'}</div>
+          <div id="math-container" style="background:var(--bg2);padding:24px;border-radius:8px;border:1px solid var(--border)">
+            <button class="btn btn-primary btn-full" onclick="Tactical.initMath()">${App.t('start_drill')}</button>
           </div>
         </div>
 
-        <!-- Digit Span Recall -->
         <div class="card">
-          <div class="card-title">Memory Digit Span</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Test working memory. Flash 6 digits for 2.5s and recall.</div>
-          <div id="digit-container" style="background:var(--bg2);padding:24px;border-radius:var(--radius-sm);border:1px solid var(--border)">
-            <button class="btn btn-ghost btn-full" onclick="Tactical.startDigitSpan()">Start Memory Flash</button>
+          <div class="card-title">${App.t('digit_span')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">${isFR ? 'Test de mémoire de travail. 6 chiffres pendant 2.5s.' : 'Test working memory. Flash 6 digits for 2.5s and recall.'}</div>
+          <div id="digit-container" style="background:var(--bg2);padding:24px;border-radius:8px;border:1px solid var(--border)">
+            <button class="btn btn-ghost btn-full" onclick="Tactical.startDigitSpan()">${isFR ? 'Démarrer Flash Mémoire' : 'Start Memory Flash'}</button>
           </div>
         </div>
 
-        <!-- SOP Mastery -->
         <div class="card">
-          <div class="card-title">SOP Mastery</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">If you can't recite it at 3 AM, you don't know it.</div>
-          <div id="sop-display" style="background:var(--bg2);padding:24px;border-radius:var(--radius-sm);border:1px solid var(--border)">
-            <button class="btn btn-ghost btn-full" onclick="Tactical.rollSOP()">🎲 Random Recall</button>
+          <div class="card-title">${App.t('sop_mastery')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">${isFR ? 'Si vous ne pouvez pas le réciter à 3h du matin, vous ne le savez pas.' : "If you can't recite it at 3 AM, you don't know it."}</div>
+          <div id="sop-display" style="background:var(--bg2);padding:24px;border-radius:8px;border:1px solid var(--border)">
+            <button class="btn btn-ghost btn-full" onclick="Tactical.rollSOP()">🎲 ${App.t('random_recall')}</button>
           </div>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Spatial Awareness -->
         <div class="card">
-          <div class="card-title">Spatial Awareness: Relative Bearing</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Convert clock position to magnetic heading. 5 rapid targets.</div>
-          <div id="spatial-container" style="background:var(--bg2);padding:24px;border-radius:var(--radius-sm);border:1px solid var(--border)">
-            <button class="btn btn-primary btn-full" onclick="Tactical.initSpatial()">Start Bearing Drill</button>
+          <div class="card-title">${App.t('spatial_awareness')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">${isFR ? 'Convertissez la position horloge en cap magnétique.' : 'Convert clock position to magnetic heading. 5 rapid targets.'}</div>
+          <div id="spatial-container" style="background:var(--bg2);padding:24px;border-radius:8px;border:1px solid var(--border)">
+            <button class="btn btn-primary btn-full" onclick="Tactical.initSpatial()">${isFR ? 'Démarrer Exercice Gisement' : 'Start Bearing Drill'}</button>
           </div>
         </div>
 
-        <!-- Communication Clarity -->
         <div class="card">
-          <div class="card-title">Communication Clarity Log</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Five-Word Rule: Rate your radio/verbal brevity today.</div>
+          <div class="card-title">${App.t('comms_clarity')}</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">${isFR ? 'Règle des Cinq Mots : Notez votre brièveté aujourd\'hui.' : 'Five-Word Rule: Rate your radio/verbal brevity today.'}</div>
           <div style="display:flex;gap:8px">
             ${[1,2,3,4,5].map(i => `<button id="comm-btn-${i}" class="btn btn-ghost rating-btn comm-btn" style="flex:1;padding:12px 0" onclick="Tactical.saveComms(${i})">${i}</button>`).join('')}
           </div>
         </div>
 
-        <!-- Reaction Time Baseline -->
         <div class="card" style="border-color:rgba(124,92,252,.3)">
-          <div class="card-title">Reaction Time Baseline</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Plot daily MS to see if you're "on" or just caffeinated.</div>
-          <button class="btn btn-ghost btn-full" style="color:var(--accent2);border-color:var(--accent2)" onclick="App.navigate('pvt')">⚡ Run PVT Diagnostics</button>
+          <div class="card-title">${isFR ? 'Temps de Réaction Baseline' : 'Reaction Time Baseline'}</div>
+          <button class="btn btn-ghost btn-full" style="color:var(--accent2);border-color:var(--accent2)" onclick="App.navigate('pvt')">⚡ ${isFR ? 'Lancer PVT Diagnostics' : 'Run PVT Diagnostics'}</button>
         </div>
       </div>
     </div>
 
-    <!-- SUBJECTIVE BIOMETRICS -->
     <div class="divider" style="margin:40px 0"></div>
-    <div style="font-size:18px;font-weight:800;margin-bottom:20px">Subjective Biometrics</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:20px">${App.t('subj_biometrics')}</div>
     
     <div class="grid-2" style="gap:24px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- RPE -->
         <div class="card">
-          <div class="card-title">Workout RPE (1-10)</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Rate of Perceived Exertion. 1 = Rest, 10 = Max Effort.</div>
+          <div class="card-title">${App.t('workout_rpe')}</div>
           <div style="display:flex;gap:12px;align-items:center">
             <input type="range" id="rpe-input" min="1" max="10" value="5" style="flex:1" oninput="document.getElementById('rpe-val').textContent=this.value">
             <div id="rpe-val" style="font-weight:800;font-size:18px;width:24px;text-align:center">5</div>
-            <button class="btn btn-primary" onclick="Tactical.saveRPE()">Log</button>
+            <button class="btn btn-primary" onclick="Tactical.saveRPE()">${App.t('log')}</button>
           </div>
         </div>
 
-        <!-- Sleep Quality -->
         <div class="card">
-          <div class="card-title">Sleep Quality ("The Feel Factor")</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Did you wake up ready to go, or want to fight your alarm?</div>
+          <div class="card-title">${App.t('sleep_quality')}</div>
           <div style="display:flex;gap:8px">
-            <button id="sleep-btn-ready" class="btn btn-ghost rating-btn sleep-btn" style="flex:1" onclick="Tactical.saveSubjective('sleep', 'ready')">Ready to Go</button>
-            <button id="sleep-btn-fight" class="btn btn-ghost rating-btn sleep-btn" style="flex:1" onclick="Tactical.saveSubjective('sleep', 'fight')">Fought Alarm</button>
+            <button id="sleep-btn-ready" class="btn btn-ghost rating-btn sleep-btn" style="flex:1" onclick="Tactical.saveSubjective('sleep', 'ready')">${isFR ? 'Prêt à Partir' : 'Ready to Go'}</button>
+            <button id="sleep-btn-fight" class="btn btn-ghost rating-btn sleep-btn" style="flex:1" onclick="Tactical.saveSubjective('sleep', 'fight')">${isFR ? 'Lutte Alarme' : 'Fought Alarm'}</button>
           </div>
         </div>
         
-        <!-- Ready-to-Operate -->
         <div class="card">
-          <div class="card-title">Ready-to-Operate Toggle</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">If today was a mission-critical day, would you be fit to handle it?</div>
+          <div class="card-title">${App.t('ready_to_operate')}</div>
           <div style="display:flex;gap:8px">
-            <button id="readyToggle-btn-yes" class="btn btn-ghost rating-btn readyToggle-btn" style="flex:1" onclick="Tactical.saveSubjective('readyToggle', 'yes')">Yes, Fit to Operate</button>
-            <button id="readyToggle-btn-no" class="btn btn-ghost rating-btn readyToggle-btn" style="flex:1" onclick="Tactical.saveSubjective('readyToggle', 'no')">No, Stand Down</button>
+            <button id="readyToggle-btn-yes" class="btn btn-ghost rating-btn readyToggle-btn" style="flex:1" onclick="Tactical.saveSubjective('readyToggle', 'yes')">${isFR ? 'Oui, Apte' : 'Yes, Fit'}</button>
+            <button id="readyToggle-btn-no" class="btn btn-ghost rating-btn readyToggle-btn" style="flex:1" onclick="Tactical.saveSubjective('readyToggle', 'no')">${isFR ? 'Non, Stand Down' : 'No, Stand Down'}</button>
           </div>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Cognitive Load -->
         <div class="card">
-          <div class="card-title">Cognitive Load (1-5)</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">How "fried" your brain feels. 1 = Fresh, 5 = Completely Fried.</div>
+          <div class="card-title">${App.t('cog_load')}</div>
           <div style="display:flex;gap:8px">
             ${[1,2,3,4,5].map(i => `<button id="cogLoad-btn-${i}" class="btn btn-ghost rating-btn cogLoad-btn" style="flex:1;padding:12px 0" onclick="Tactical.saveSubjective('cogLoad', ${i})">${i}</button>`).join('')}
           </div>
         </div>
 
-        <!-- Visual Acuity -->
         <div class="card">
-          <div class="card-title">Visual Acuity Check (1-5)</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Rate eye strain/focus speed. 1 = Perfect, 5 = Severe Strain.</div>
+          <div class="card-title">${App.t('visual_acuity')}</div>
           <div style="display:flex;gap:8px">
             ${[1,2,3,4,5].map(i => `<button id="visualAcuity-btn-${i}" class="btn btn-ghost rating-btn visualAcuity-btn" style="flex:1;padding:12px 0" onclick="Tactical.saveSubjective('visualAcuity', ${i})">${i}</button>`).join('')}
           </div>
@@ -544,32 +536,27 @@ const Tactical = {
       </div>
     </div>
 
-    <!-- DISCIPLINE & TACTICAL HABITS -->
     <div class="divider" style="margin:40px 0"></div>
-    <div style="font-size:18px;font-weight:800;margin-bottom:20px">Discipline & Tactical Habits</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:20px">${App.t('discipline_habits')}</div>
     
     <div class="grid-2" style="gap:24px;align-items:start">
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- AAR -->
         <div class="card">
-          <div class="card-title">After-Action Review (AAR)</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Debrief after every major task or study session.</div>
+          <div class="card-title">${App.t('aar')}</div>
           <div class="form-group" style="margin-bottom:12px">
-            <input type="text" id="aar-obj" class="form-input" placeholder="Objective (What did you intend to do?)">
+            <input type="text" id="aar-obj" class="form-input" placeholder="${isFR ? 'Objectif (Que vouliez-vous faire ?)' : 'Objective (What did you intend to do?)'}">
           </div>
           <div class="form-group" style="margin-bottom:12px">
-            <input type="text" id="aar-out" class="form-input" placeholder="Outcome (What actually happened?)">
+            <input type="text" id="aar-out" class="form-input" placeholder="${isFR ? 'Résultat (Que s\'est-il passé ?)' : 'Outcome (What actually happened?)'}">
           </div>
           <div class="form-group" style="margin-bottom:16px">
-            <input type="text" id="aar-adj" class="form-input" placeholder="Adjustment (What will you change?)">
+            <input type="text" id="aar-adj" class="form-input" placeholder="${isFR ? 'Ajustement (Que changerez-vous ?)' : 'Adjustment (What will you change?)'}">
           </div>
-          <button class="btn btn-primary btn-full" onclick="Tactical.saveAAR()">Log AAR</button>
+          <button class="btn btn-primary btn-full" onclick="Tactical.saveAAR()">${App.t('log')} AAR</button>
         </div>
 
-        <!-- Zero-Distraction Streaks -->
         <div class="card">
-          <div class="card-title">Zero-Distraction Streaks</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Completed 90-minute blocks with phone in another room.</div>
+          <div class="card-title">${App.t('zero_distraction')}</div>
           <div style="display:flex;align-items:center;justify-content:space-between">
             <div style="font-size:48px;font-weight:900;color:var(--accent)" id="distraction-count">0</div>
             <button class="btn btn-ghost" onclick="Tactical.incrementDistractionFree()">+1 Block</button>
@@ -578,88 +565,71 @@ const Tactical = {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Cold Exposure -->
         <div class="card">
-          <div class="card-title">Cold Exposure / Discomfort Log</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Resilience is a muscle. Track seconds in cold or discomfort.</div>
+          <div class="card-title">${App.t('cold_exposure')}</div>
           <div style="display:flex;gap:12px;align-items:center">
             <input type="number" id="cold-input" class="form-input" placeholder="Seconds..." style="flex:1">
-            <button class="btn btn-primary" onclick="Tactical.saveColdExposure()">Log</button>
+            <button class="btn btn-primary" onclick="Tactical.saveColdExposure()">${App.t('log')}</button>
           </div>
           <div style="font-size:12px;color:var(--text3);margin-top:12px" id="cold-total">0s today</div>
         </div>
 
-        <!-- No-Fly List -->
         <div class="card">
-          <div class="card-title">The "No-Fly" List</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Banned habits checklist for today.</div>
+          <div class="card-title">${App.t('nofly_list')}</div>
           <div id="nofly-list"></div>
         </div>
 
-        <!-- Gear Readiness -->
         <div class="card">
-          <div class="card-title">Uniform & Gear Readiness</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Is everything prepped and staged for tomorrow?</div>
+          <div class="card-title">${App.t('gear_readiness')}</div>
           <div id="gear-list"></div>
         </div>
       </div>
     </div>
 
-    <!-- STRATEGIC INFRASTRUCTURE -->
     <div class="divider" style="margin:40px 0"></div>
-    <div style="font-size:18px;font-weight:800;margin-bottom:20px">Strategic Infrastructure</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:20px">${App.t('strat_infra')}</div>
     
     <div class="grid-2" style="gap:24px;align-items:start;margin-bottom:60px">
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Knowledge Bank -->
         <div class="card">
-          <div class="card-title">Knowledge Bank ("Second Brain")</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Track progress of technical manuals you are currently downloading.</div>
+          <div class="card-title">${App.t('knowledge_bank')}</div>
           <div id="know-list" style="margin-bottom:16px"></div>
           <div style="display:flex;gap:8px">
-            <input type="text" id="know-book" class="form-input" placeholder="Book / Manual Title..." style="flex:2">
+            <input type="text" id="know-book" class="form-input" placeholder="${isFR ? 'Titre Manuel...' : 'Book / Manual Title...'}" style="flex:2">
             <input type="number" id="know-pct" class="form-input" placeholder="%" style="flex:1" min="0" max="100">
             <button class="btn btn-primary" onclick="Tactical.saveKnowledge()">Save</button>
           </div>
         </div>
 
-        <!-- Decision Journal -->
         <div class="card">
-          <div class="card-title">Decision Journal</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Log "Big Decisions" to review logic vs emotion 30 days later.</div>
+          <div class="card-title">${App.t('decision_journal')}</div>
           <div id="dec-list" style="margin-bottom:16px"></div>
           <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="dec-text" class="form-input" placeholder="What did you decide today?">
+            <input type="text" id="dec-text" class="form-input" placeholder="${isFR ? 'Qu\'avez-vous décidé aujourd\'hui ?' : 'What did you decide today?'}">
             <button class="btn btn-primary" onclick="Tactical.saveDecision()">Log</button>
           </div>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:24px">
-        <!-- Financial Runway -->
         <div class="card">
-          <div class="card-title">Financial Runway</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Track your "Survival Days" if everything stops.</div>
+          <div class="card-title">${App.t('financial_runway')}</div>
           <div id="runway-display" style="margin-bottom:12px">
-            <span style="font-size:32px;font-weight:900;color:var(--text3)">0</span> <span style="color:var(--text3)">Survival Days</span>
+            <span style="font-size:32px;font-weight:900;color:var(--text3)">0</span> <span style="color:var(--text3)">${isFR ? 'Jours de Survie' : 'Survival Days'}</span>
           </div>
           <div style="display:flex;gap:8px">
-            <input type="number" id="runway-days" class="form-input" placeholder="Recalculate days...">
+            <input type="number" id="runway-days" class="form-input" placeholder="${isFR ? 'Recalculer jours...' : 'Recalculate days...'}">
             <button class="btn btn-primary" onclick="Tactical.saveRunway()">Update</button>
           </div>
         </div>
 
-        <!-- Skill Tree Progression -->
         <div class="card">
-          <div class="card-title">Skill Tree Progression</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Visualize pipeline goals as an unlocking skill tree.</div>
+          <div class="card-title">${App.t('skill_tree_prog')}</div>
           <div id="skill-list"></div>
         </div>
 
-        <!-- Environmental Quality Log -->
         <div class="card">
-          <div class="card-title">Environmental Quality Log</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Rate workspace (1-5). Fix environment to fix performance.</div>
+          <div class="card-title">${App.t('env_quality')}</div>
           <div style="display:flex;gap:8px">
             ${[1,2,3,4,5].map(i => `<button id="env-btn-${i}" class="btn btn-ghost rating-btn env-btn" style="flex:1;padding:12px 0" onclick="Tactical.saveSubjective('env', ${i})">${i}</button>`).join('')}
           </div>
@@ -676,8 +646,6 @@ const Tactical = {
   afterRender() {
     clearInterval(this._mathTimer);
     clearInterval(this._spatialTimer);
-    
-    // Hydrate today's data if it exists
     const today = DB.today();
     
     const commLog = DB.get('comms_history', []).find(c => c.date === today);
@@ -698,14 +666,13 @@ const Tactical = {
     const envLog = DB.get('subj_env_history', []).find(c => c.date === today);
     if (envLog) document.getElementById(`env-btn-${envLog.value}`)?.classList.add('active');
 
-    // Section 3 init
     const dCount = DB.get('distraction_history', []).find(h => h.date === today)?.blocks || parseInt(DB.get(`streak_${today}`, 0)) || 0;
-    document.getElementById('distraction-count').textContent = dCount;
+    const countEl = document.getElementById('distraction-count');
+    if (countEl) countEl.textContent = dCount;
+
     this._refreshColdTotal();
     this._refreshNoFly();
     this._refreshGear();
-
-    // Section 4 init
     this._refreshKnowledge();
     this._refreshDecisions();
     this._refreshRunway();

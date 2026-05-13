@@ -40,6 +40,10 @@ const categories = [
   {
     name: 'Intelligence & Analysis',
     skills: ['Speed Reading', 'Body Language Reading', 'Micro-expression Analysis', 'Lie Detection', 'Cryptanalysis', 'Memory Palace', 'Facial Recognition', 'Acoustic Signature ID', 'Signal Interception', 'OSINT Research', 'Interrogation Tactics', 'Elicitation', 'Disguise Craft', 'Surveillance Evasion', 'Stenography', 'Data Mining']
+  },
+  {
+    name: 'Daily Operator Skills',
+    skills: ['Runner Knot Tying', 'Tying a Tie (Cravate)', 'Cooking High-Protein Meal', 'Military Gear Cleaning', 'Knife Sharpening', 'Folding Clothes (Military)', 'Polishing Boots', 'Firearm Maintenance', 'Changing Watch Battery', 'Gear Repair (Sewing)', 'Ironing a Uniform', 'Packing a Go-Bag', 'Flashlight Maintenance', 'Safe Water Storage', 'Battery Rotation', 'Tool Maintenance']
   }
 ];
 

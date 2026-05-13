@@ -3,8 +3,282 @@
 const App = {
   _current: null,
   _briefingData: {},
+  _lang: 'en',
+
+  STRINGS: {
+    en: {
+      morning_briefing: "Morning Briefing",
+      pvt_test: "PVT Test",
+      deep_work: "Deep Work",
+      task_stack: "Task Stack",
+      operator_hub: "Operator Hub",
+      the_crucible: "The Crucible",
+      skill_tree: "Skill Tree",
+      mission_command: "Mission Command",
+      intel_archives: "Intel Archives",
+      pilot_log: "Pilot Log",
+      settings: "Settings",
+      protocol: "Daily Protocol",
+      tactical: "Tactical",
+      analytics: "Analytics",
+      system: "System",
+      system_status: "System Status",
+      pending: "PENDING",
+      readiness_score: "Readiness Score",
+      biometric_checklist: "Biometric Checklist",
+      sacred_schedule: "Sacred Schedule",
+      diagnostic_complete: "Diagnostic Complete",
+      operational_state: "Operational State",
+      directives: "Daily Directives",
+      signal_weights: "Signal Weights",
+      pvt_diagnostics: "PVT Diagnostics",
+      avg_rt: "Avg RT",
+      lapses: "Lapses",
+      false_starts: "False Starts",
+      acknowledge_begin: "Acknowledge & Begin Deep Work",
+      initiate_pvt: "Initiate PVT Test",
+      good_morning: "Good Morning",
+      good_afternoon: "Good Afternoon",
+      good_evening: "Good Evening",
+      pilot: "Pilot",
+      rcaf_pipeline: "RCAF Pipeline Active",
+      target: "Target",
+      ok: "OK",
+      training: "Training",
+      academic: "Academic",
+      execute_mission: "EXECUTE MISSION",
+      objectives_incomplete: "OBJECTIVES INCOMPLETE",
+      mission_accomplished: "MISSION ACCOMPLISHED",
+      requirement_breakdown: "Requirement Breakdown",
+      click_to_show: "Click to show requirements ▼",
+      click_to_collapse: "Click to collapse details ▲",
+      mastered: "MASTERED",
+      ready: "READY",
+      locked: "LOCKED",
+      ingested: "INGESTED",
+      mark_memorized: "MARK AS MEMORIZED",
+      start_quiz: "START PROFICIENCY QUIZ",
+      abort: "ABORT",
+      submit_verification: "SUBMIT VERIFICATION",
+      question: "Question",
+      of: "of",
+      enter_terminology: "Enter exact protocol terminology...",
+      proficiency_verification: "Proficiency Verification",
+      proficiency_verified: "PROFICIENCY VERIFIED",
+      start_test: "START TEST",
+      pvt_desc: "Wait for the RED box to turn GREEN, then click as fast as possible.",
+      test_in_progress: "TEST IN PROGRESS",
+      click_now: "CLICK NOW!",
+      wait: "WAIT...",
+      too_fast: "TOO FAST!",
+      results: "RESULTS",
+      save_results: "SAVE RESULTS",
+      deep_work_desc: "Eliminate all distractions. Focus on a single high-value task.",
+      start_session: "START SESSION",
+      end_session: "END SESSION",
+      minutes: "Minutes",
+      add_task: "Add Task",
+      task_placeholder: "What needs to be done?",
+      low: "Low",
+      med: "Med",
+      high: "High",
+      crit: "Crit",
+      no_tasks: "No tasks in the stack. Add one above.",
+      crucible_desc: "Extreme physiological and psychological challenges to forge elite resilience.",
+      start_challenge: "START CHALLENGE",
+      challenge_complete: "CHALLENGE COMPLETE",
+      unlocked: "UNLOCKED",
+      search_skills: "Search 500+ skills...",
+      expected_time: "Expected Time",
+      requirements_needed: "Requirements",
+      cost_warning: "💰 Warning: Requires financial investment",
+      learn_skill: "LEARN SKILL",
+      skill_learned: "SKILL LEARNED",
+      language: "Language",
+      save_settings: "Save Settings",
+      profile_updated: "Profile updated",
+      onboarding_welcome: "Welcome, Pilot",
+      onboarding_desc: "Initialize your tactical performance environment.",
+      enter_name: "Enter Full Name",
+      enter_age: "Enter Age",
+      enter_location: "Enter Location (e.g. Gatineau, QC)",
+      target_year: "Target RCAF Year",
+      complete_onboarding: "Complete Onboarding",
+      cognitive_edge: "Cognitive & Technical Edge",
+      mental_math: "Mental Math Performance",
+      digit_span: "Memory Digit Span",
+      sop_mastery: "SOP Mastery",
+      spatial_awareness: "Spatial Awareness: Relative Bearing",
+      comms_clarity: "Communication Clarity Log",
+      subj_biometrics: "Subjective Biometrics",
+      workout_rpe: "Workout RPE (1-10)",
+      sleep_quality: "Sleep Quality",
+      ready_to_operate: "Ready-to-Operate Toggle",
+      cog_load: "Cognitive Load (1-5)",
+      visual_acuity: "Visual Acuity Check (1-5)",
+      discipline_habits: "Discipline & Tactical Habits",
+      aar: "After-Action Review (AAR)",
+      zero_distraction: "Zero-Distraction Streaks",
+      cold_exposure: "Cold Exposure / Discomfort Log",
+      nofly_list: "The 'No-Fly' List",
+      gear_readiness: "Uniform & Gear Readiness",
+      strat_infra: "Strategic Infrastructure",
+      knowledge_bank: "Knowledge Bank",
+      decision_journal: "Decision Journal",
+      financial_runway: "Financial Runway",
+      skill_tree_prog: "Skill Tree Progression",
+      env_quality: "Environmental Quality Log",
+      start_drill: "Start Drill",
+      retry: "Retry",
+      passed: "Passed!",
+      perfect_recall: "Perfect Recall!",
+      target_locked: "Target Locked!",
+      log_recorded: "Log recorded.",
+      roll_again: "Roll again?",
+      random_recall: "Random Recall",
+      log: "Log"
+    },
+    fr: {
+      morning_briefing: "Briefing Matinal",
+      pvt_test: "Test PVT",
+      deep_work: "Travail Profond",
+      task_stack: "Pile de Tâches",
+      operator_hub: "Centre Opérationnel",
+      the_crucible: "Le Creuset",
+      skill_tree: "Arbre de Compétences",
+      mission_command: "Commandement de Mission",
+      intel_archives: "Archives Intel",
+      pilot_log: "Journal de Bord",
+      settings: "Paramètres",
+      protocol: "Protocole Quotidien",
+      tactical: "Tactique",
+      analytics: "Analytiques",
+      system: "Système",
+      system_status: "Statut Système",
+      pending: "EN ATTENTE",
+      readiness_score: "Score d'État",
+      biometric_checklist: "Liste Biométrique",
+      sacred_schedule: "Horaire Sacré",
+      diagnostic_complete: "Diagnostic Terminé",
+      operational_state: "État Opérationnel",
+      directives: "Directives du Jour",
+      signal_weights: "Poids des Signaux",
+      pvt_diagnostics: "Diagnostics PVT",
+      avg_rt: "Temps Moyen",
+      lapses: "Lapses",
+      false_starts: "Faux Départs",
+      acknowledge_begin: "Confirmer & Commencer",
+      initiate_pvt: "Lancer le Test PVT",
+      good_morning: "Bon Matin",
+      good_afternoon: "Bon Après-midi",
+      good_evening: "Bonsoir",
+      pilot: "Pilote",
+      rcaf_pipeline: "Pipeline RCAF Actif",
+      target: "Objectif",
+      ok: "OK",
+      training: "Entraînement",
+      academic: "Académique",
+      execute_mission: "EXÉCUTER LA MISSION",
+      objectives_incomplete: "OBJECTIFS INCOMPLETS",
+      mission_accomplished: "MISSION ACCOMPLIE",
+      requirement_breakdown: "Détails des Prérequis",
+      click_to_show: "Cliquer pour voir les prérequis ▼",
+      click_to_collapse: "Cliquer pour masquer ▲",
+      mastered: "MAÎTRISÉ",
+      ready: "PRÊT",
+      locked: "VERROUILLÉ",
+      ingested: "INGÉRÉ",
+      mark_memorized: "MARQUER COMME MÉMORISÉ",
+      start_quiz: "LANCER LE QUIZ DE MAÎTRISE",
+      abort: "ANNULER",
+      submit_verification: "SOUMETTRE VÉRIFICATION",
+      question: "Question",
+      of: "sur",
+      enter_terminology: "Entrez la terminologie exacte...",
+      proficiency_verification: "Vérification de Maîtrise",
+      proficiency_verified: "MAÎTRISE VÉRIFIÉE",
+      start_test: "COMMENCER LE TEST",
+      pvt_desc: "Attendez que la boîte ROUGE devienne VERTE, puis cliquez le plus vite possible.",
+      test_in_progress: "TEST EN COURS",
+      click_now: "CLIQUEZ !",
+      wait: "ATTENDEZ...",
+      too_fast: "TROP VITE !",
+      results: "RÉSULTATS",
+      save_results: "ENREGISTRER",
+      deep_work_desc: "Éliminez toute distraction. Concentrez-vous sur une seule tâche.",
+      start_session: "DÉMARRER LA SESSION",
+      end_session: "TERMINER LA SESSION",
+      minutes: "Minutes",
+      add_task: "Ajouter Tâche",
+      task_placeholder: "Que faut-il faire ?",
+      low: "Bas",
+      med: "Moy",
+      high: "Haut",
+      crit: "Crit",
+      no_tasks: "Aucune tâche. Ajoutez-en une.",
+      crucible_desc: "Défis extrêmes pour forger une résilience d'élite.",
+      start_challenge: "COMMENCER LE DÉFI",
+      challenge_complete: "DÉFI COMPLÉTÉ",
+      unlocked: "DÉVERROUILLÉ",
+      search_skills: "Rechercher 500+ compétences...",
+      expected_time: "Temps Estimé",
+      requirements_needed: "Prérequis",
+      cost_warning: "💰 Attention : Nécessite un investissement",
+      learn_skill: "APPRENDRE",
+      skill_learned: "COMPÉTENCE ACQUISE",
+      language: "Langue",
+      save_settings: "Enregistrer Paramètres",
+      profile_updated: "Profil mis à jour",
+      onboarding_welcome: "Bienvenue, Pilote",
+      onboarding_desc: "Initialisez votre environnement de performance tactique.",
+      enter_name: "Nom Complet",
+      enter_age: "Âge",
+      enter_location: "Localisation (ex: Gatineau, QC)",
+      target_year: "Année Cible RCAF",
+      complete_onboarding: "Terminer l'Initialisation",
+      cognitive_edge: "Avantage Cognitif et Technique",
+      mental_math: "Performance Calcul Mental",
+      digit_span: "Mémoire à Court Terme",
+      sop_mastery: "Maîtrise des SOP",
+      spatial_awareness: "Conscience Spatiale : Gisement Relatif",
+      comms_clarity: "Log de Clarté des Communications",
+      subj_biometrics: "Biométrie Subjective",
+      workout_rpe: "RPE d'Entraînement (1-10)",
+      sleep_quality: "Qualité du Sommeil",
+      ready_to_operate: "État de Disponibilité Opérationnelle",
+      cog_load: "Charge Cognitive (1-5)",
+      visual_acuity: "Acuité Visuelle (1-5)",
+      discipline_habits: "Discipline et Habitudes Tactiques",
+      aar: "Revue Après-Action (AAR)",
+      zero_distraction: "Séries sans Distraction",
+      cold_exposure: "Exposition au Froid / Log d'Inconfort",
+      nofly_list: "Liste 'No-Fly'",
+      gear_readiness: "Préparation Uniforme et Équipement",
+      strat_infra: "Infrastructure Stratégique",
+      knowledge_bank: "Banque de Connaissances",
+      decision_journal: "Journal de Décision",
+      financial_runway: "Autonomie Financière",
+      skill_tree_prog: "Progression de l'Arbre de Compétences",
+      env_quality: "Qualité de l'Environnement",
+      start_drill: "Démarrer l'Exercice",
+      retry: "Réessayer",
+      passed: "Réussi !",
+      perfect_recall: "Rappel Parfait !",
+      target_locked: "Cible Verrouillée !",
+      log_recorded: "Log enregistré.",
+      roll_again: "Relancer ?",
+      random_recall: "Rappel Aléatoire",
+      log: "Enregistrer"
+    }
+  },
+
+  t(key) {
+    return this.STRINGS[this._lang][key] || key;
+  },
 
   init() {
+    const p = Account.get() || {};
+    this._lang = p.lang || 'en';
     if (!Account.isSetup()) {
       document.getElementById('app').innerHTML = Account.renderOnboarding();
       return;
@@ -18,24 +292,22 @@ const App = {
   _playBootSequence(cb) {
     if (sessionStorage.getItem('booted')) { cb(); return; }
     sessionStorage.setItem('booted', '1');
-    
+    const isFR = this._lang === 'fr';
     document.getElementById('app').innerHTML = `
       <div class="boot-screen">
         <div class="boot-scanline"></div>
         <div class="boot-content" id="boot-text"></div>
-      </div>
-    `;
+      </div>`;
     
     const lines = [
       "INITIALIZING PERFORMANCE OS [v2.4.1]",
       "KERNEL: RCAF_CANDIDATE_OPTIMIZATION_MODULE",
       "MOUNTING ENCRYPTED FILE SYSTEM... OK",
       "ESTABLISHING BIOMETRIC UPLINK... STANDBY",
-      "UPLINK SECURED. DECRYPTING DAILY DIRECTIVES...",
-      "WELCOME, VICTOR COUTU."
+      isFR ? "LIAISON SÉCURISÉE. DÉCRYPTAGE DES DIRECTIVES..." : "UPLINK SECURED. DECRYPTING DAILY DIRECTIVES...",
+      isFR ? "BIENVENUE, VICTOR COUTU." : "WELCOME, VICTOR COUTU."
     ];
-    let html = "";
-    let i = 0;
+    let html = "", i = 0;
     const textEl = document.getElementById('boot-text');
     const interval = setInterval(() => {
       if (i < lines.length) {
@@ -63,53 +335,33 @@ const App = {
           <div class="logo-sub">RCAF Pipeline</div>
         </div>
       </div>
-
-      <div class="nav-section">Daily Protocol</div>
-      <button class="nav-item active" id="nav-briefing" onclick="App.navigate('briefing')">
-        <span class="nav-icon">🌅</span><span>Morning Briefing</span>
-      </button>
-      <button class="nav-item" id="nav-pvt" onclick="App.navigate('pvt')">
-        <span class="nav-icon">⚡</span><span>PVT Test</span>
-      </button>
-      <button class="nav-item" id="nav-deepwork" onclick="App.navigate('deepwork')">
-        <span class="nav-icon">🧠</span><span>Deep Work</span>
-      </button>
-      <button class="nav-item" id="nav-tasks" onclick="App.navigate('tasks')">
-        <span class="nav-icon">📋</span><span>Task Stack</span>
-      </button>
-
-      <div class="nav-section" style="margin-top:16px">Tactical</div>
-      <button class="nav-item" id="nav-tactical" onclick="App.navigate('tactical')">
-        <span class="nav-icon">🦅</span><span>Operator Hub</span>
-      </button>
-      <button class="nav-item" id="nav-challenges" onclick="App.navigate('challenges')">
-        <span class="nav-icon">🔥</span><span>The Crucible</span>
-      </button>
-      <button class="nav-item" id="nav-skills" onclick="App.navigate('skills')">
-        <span class="nav-icon">🧠</span><span>Skill Tree</span>
-      </button>
-
-      <div class="nav-section" style="margin-top:16px">Analytics</div>
-      <button class="nav-item" id="nav-dashboard" onclick="App.navigate('dashboard')">
-        <span class="nav-icon">📊</span><span>Pilot Log</span>
-      </button>
-
-      <div class="nav-section" style="margin-top:16px">System</div>
-      <button class="nav-item" id="nav-settings" onclick="App.navigate('settings')">
-        <span class="nav-icon">⚙️</span><span>Settings</span>
-      </button>
-
+      <div class="nav-section">${this.t('protocol')}</div>
+      <button class="nav-item active" id="nav-briefing" onclick="App.navigate('briefing')"><span class="nav-icon">🌅</span><span>${this.t('morning_briefing')}</span></button>
+      <button class="nav-item" id="nav-pvt" onclick="App.navigate('pvt')"><span class="nav-icon">⚡</span><span>${this.t('pvt_test')}</span></button>
+      <button class="nav-item" id="nav-deepwork" onclick="App.navigate('deepwork')"><span class="nav-icon">🧠</span><span>${this.t('deep_work')}</span></button>
+      <button class="nav-item" id="nav-tasks" onclick="App.navigate('tasks')"><span class="nav-icon">📋</span><span>${this.t('task_stack')}</span></button>
+      <div class="nav-section" style="margin-top:16px">${this.t('tactical')}</div>
+      <button class="nav-item" id="nav-tactical" onclick="App.navigate('tactical')"><span class="nav-icon">🦅</span><span>${this.t('operator_hub')}</span></button>
+      <button class="nav-item" id="nav-challenges" onclick="App.navigate('challenges')"><span class="nav-icon">🔥</span><span>${this.t('the_crucible')}</span></button>
+      <button class="nav-item" id="nav-skills" onclick="App.navigate('skills')"><span class="nav-icon">🧠</span><span>${this.t('skill_tree')}</span></button>
+      <button class="nav-item" id="nav-missions" onclick="App.navigate('missions')"><span class="nav-icon">🗺️</span><span>${this.t('mission_command')}</span></button>
+      <button class="nav-item" id="nav-intel" onclick="App.navigate('intel')"><span class="nav-icon">📁</span><span>${this.t('intel_archives')}</span></button>
+      <div class="nav-section" style="margin-top:16px">${this.t('analytics')}</div>
+      <button class="nav-item" id="nav-dashboard" onclick="App.navigate('dashboard')"><span class="nav-icon">📊</span><span>${this.t('pilot_log')}</span></button>
+      <div id="readiness-hud-container"></div>
+      <div class="nav-section" style="margin-top:16px">${this.t('system')}</div>
+      <button class="nav-item" id="nav-settings" onclick="App.navigate('settings')"><span class="nav-icon">⚙️</span><span>${this.t('settings')}</span></button>
       <div class="sidebar-spacer"></div>
       <div class="sidebar-profile" onclick="App.navigate('settings')" style="padding:20px;border-top:1px solid var(--border);background:var(--bg2)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="font-weight:700">${p.name || 'Pilot'}</div>
-          <div style="font-size:12px;font-weight:800;color:var(--accent)" id="user-rank">Officer Cadet</div>
+          <div style="font-weight:700">${p.name || this.t('pilot')}</div>
+          <div style="font-size:12px;font-weight:800;color:var(--accent)" id="user-rank">${this._lang === 'fr' ? 'Élève-Officier' : 'Officer Cadet'}</div>
         </div>
         <div class="progress-bar-bg" style="height:6px;margin-bottom:8px">
-          <div id="user-xp-bar" style="height:100%;background:var(--accent);border-radius:99px;width:0%;transition:width 0.3s ease"></div>
+          <div id="user-xp-bar" style="height:100%;background:var(--accent);border-radius:99px;width:0%"></div>
         </div>
         <div style="font-size:12px;color:var(--text3);display:flex;justify-content:space-between">
-          <span>RCAF Target: ${p.rcafYear || 2031}</span>
+          <span>Target: ${p.rcafYear || 2031}</span>
           <span id="user-xp-text" style="font-weight:700">0 XP</span>
         </div>
       </div>
@@ -121,34 +373,22 @@ const App = {
   },
 
   navigate(screen, params = {}) {
-    // Cleanup timers from previous screen
-    if (this._current === 'deepwork' && DeepWork._interval) {
-      clearInterval(DeepWork._interval);
-      DeepWork._running = false;
-    }
     if (this._current === 'pvt') PVT.reset();
-
     this._current = screen;
     this._briefingData = { ...this._briefingData, ...params };
-
-    // Update nav
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     const navEl = document.getElementById(`nav-${screen}`);
     if (navEl) navEl.classList.add('active');
-
-    // Render screen
     const content = document.getElementById('screen-content');
     if (!content) return;
     content.innerHTML = this._renderScreen(screen);
-
-    // After-render hooks
     if (screen === 'pvt') PVT.afterRender();
     if (screen === 'deepwork') DeepWork.afterRender();
     if (screen === 'dashboard') Dashboard.afterRender();
     if (screen === 'tactical') Tactical.afterRender();
     if (screen === 'challenges') Challenges.afterRender();
     if (screen === 'skills') Skills.afterRender();
-    
+    if (window.Readiness) document.getElementById('readiness-hud-container').innerHTML = Readiness.renderFuelGauge();
     this.updateXP();
   },
 
@@ -161,6 +401,8 @@ const App = {
       case 'tactical': return Tactical.render();
       case 'challenges': return Challenges.render();
       case 'skills': return Skills.render();
+      case 'missions': return Missions.render();
+      case 'intel': return Intel.render();
       case 'dashboard': return Dashboard.render();
       case 'settings': return Account.renderSettings();
       default: return '<div style="padding:40px;color:var(--text3)">Screen not found</div>';
@@ -169,39 +411,30 @@ const App = {
 
   updateXP() {
     const xp = parseInt(DB.get('total_xp', 0)) || 0;
+    const isFR = this._lang === 'fr';
     const ranks = [
-      { name: 'Officer Cadet', req: 0 },
-      { name: 'Second Lieutenant', req: 1000 },
-      { name: 'Lieutenant', req: 2500 },
-      { name: 'Captain', req: 5000 },
-      { name: 'Major', req: 10000 },
-      { name: 'Lt. Colonel', req: 25000 },
-      { name: 'Colonel', req: 50000 }
+      { name: isFR ? 'Élève-Officier' : 'Officer Cadet', req: 0 },
+      { name: isFR ? 'Sous-Lieutenant' : 'Second Lieutenant', req: 1000 },
+      { name: isFR ? 'Lieutenant' : 'Lieutenant', req: 2500 },
+      { name: isFR ? 'Capitaine' : 'Captain', req: 5000 },
+      { name: isFR ? 'Major' : 'Major', req: 10000 },
+      { name: isFR ? 'Lieutenant-Colonel' : 'Lt. Colonel', req: 25000 },
+      { name: isFR ? 'Colonel' : 'Colonel', req: 50000 }
     ];
     let currentRank = ranks[0];
     let nextRank = ranks[1];
     for (let i = 0; i < ranks.length; i++) {
-      if (xp >= ranks[i].req) {
-        currentRank = ranks[i];
-        nextRank = ranks[i+1] || ranks[i];
-      }
+      if (xp >= ranks[i].req) { currentRank = ranks[i]; nextRank = ranks[i+1] || ranks[i]; }
     }
-    
     const xpEl = document.getElementById('user-xp-bar');
     const rankEl = document.getElementById('user-rank');
     const textEl = document.getElementById('user-xp-text');
-    
     if (xpEl && rankEl && textEl) {
       rankEl.textContent = currentRank.name;
       textEl.textContent = `${xp} XP`;
       if (nextRank.req > currentRank.req) {
-        const progress = ((xp - currentRank.req) / (nextRank.req - currentRank.req)) * 100;
-        xpEl.style.width = `${Math.min(100, Math.max(0, progress))}%`;
-        xpEl.parentElement.title = `Next Rank: ${nextRank.name} (${nextRank.req - xp} XP to go)`;
-      } else {
-        xpEl.style.width = `100%`;
-        xpEl.parentElement.title = `Max Rank Achieved`;
-      }
+        xpEl.style.width = `${((xp - currentRank.req) / (nextRank.req - currentRank.req)) * 100}%`;
+      } else xpEl.style.width = `100%`;
     }
   },
 
@@ -209,157 +442,53 @@ const App = {
     const pvt = this._briefingData.pvtResult;
     const profile = Account.get() || {};
     const today = DB.today();
-    const now = new Date();
-    const hour = now.getHours();
-    const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+    const isFR = this._lang === 'fr';
+    const hour = new Date().getHours();
+    const greeting = this.t(hour < 12 ? 'good_morning' : hour < 17 ? 'good_afternoon' : 'good_evening');
 
     if (!pvt) {
-      // Pre-PVT state
       const schedule = [
-        { time: '06:00', title: 'Wake-Up', sub: 'Advanced target: 06:30' },
-        { time: '06:10', title: 'PVT + Morning Brief', sub: 'CNS diagnostic + Readiness score' },
-        { time: '06:10 – 09:00', title: 'Deep Work Block', sub: 'CÉGEP · Cadet Theory · Chess' },
-        { time: '09:20 – 16:15', title: 'Enriched Academic', sub: 'Sciences de la nature' },
-        { time: '16:30 – 18:30', title: 'Training Window', sub: 'Runna / Strength / Neck' },
-        { time: '18:30 – 21:30', title: 'Study Block 2 + Recovery', sub: 'Dinner & debrief' },
-        { time: '22:00', title: 'Sleep Protocol', sub: '8h — Non-negotiable' },
+        { time: '06:00', title: isFR ? 'Réveil' : 'Wake-Up' },
+        { time: '06:10', title: 'PVT + Morning Brief' },
+        { time: '06:10 – 09:00', title: isFR ? 'Bloc Travail Profond' : 'Deep Work Block' },
+        { time: '22:00', title: isFR ? 'Protocole Sommeil' : 'Sleep Protocol' },
       ];
       return `
       <div class="page-header">
-        <div class="page-title">${greeting}, <span>${(profile.name || 'Pilot').split(' ')[0]}</span></div>
-        <div class="page-sub">${today} · RCAF Pipeline Active · Target: ${profile.rcafYear || 2031}</div>
+        <div class="page-title">${greeting}, <span>${(profile.name || this.t('pilot')).split(' ')[0]}</span></div>
+        <div class="page-sub">${today} · ${this.t('rcaf_pipeline')}</div>
       </div>
-
-      <div class="grid-2" style="gap:24px;margin-bottom:28px;align-items:start">
-        <div>
-          <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(79,142,247,.1),rgba(124,92,252,.08));border-color:rgba(79,142,247,.25)">
-            <div style="font-size:15px;font-weight:700;margin-bottom:8px">🚨 System Status: PENDING</div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:20px">PVT test not completed. Readiness score unavailable. Complete your morning diagnostic to unlock today's directives.</div>
-            <button class="btn btn-primary btn-full" onclick="App.navigate('pvt')">⚡ Initiate PVT Test</button>
-          </div>
-          <div class="card">
-            <div class="card-title">Biometric Checklist</div>
-            ${['Garmin Sync', 'Sleep Analysis', 'TSB Calculation', 'PVT Test'].map((item, i) =>
-              `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;${i<3?'border-bottom:1px solid var(--border)':''}">
-                <span style="color:${i < 3 ? 'var(--green)' : 'var(--text3)'}">●</span>
-                <span style="font-family:var(--mono);font-size:13px;color:${i < 3 ? 'var(--text)' : 'var(--text3)'}">${item}</span>
-                <span style="margin-left:auto;font-size:11px;color:${i < 3 ? 'var(--green)' : 'var(--yellow)'};font-weight:700">${i < 3 ? 'OK' : 'PENDING'}</span>
-              </div>`).join('')}
-          </div>
+      <div class="grid-2" style="gap:24px">
+        <div class="card" style="background:linear-gradient(135deg,rgba(79,142,247,.1),rgba(124,92,252,.08))">
+          <div style="font-size:15px;font-weight:700;margin-bottom:8px">🚨 ${this.t('system_status')}: ${this.t('pending')}</div>
+          <button class="btn btn-primary btn-full" onclick="App.navigate('pvt')">⚡ ${this.t('initiate_pvt')}</button>
         </div>
-
         <div class="card">
-          <div class="card-title">Sacred Schedule</div>
-          ${schedule.map(s => `
-          <div class="timeline-item">
-            <div class="timeline-time">${s.time}</div>
-            <div class="timeline-content">
-              <div class="timeline-title">${s.title}</div>
-              <div class="timeline-sub">${s.sub}</div>
-            </div>
-          </div>`).join('')}
+          <div class="card-title">${this.t('sacred_schedule')}</div>
+          ${schedule.map(s => `<div class="timeline-item"><div class="timeline-time">${s.time}</div><div class="timeline-content"><div class="timeline-title">${s.title}</div></div></div>`).join('')}
         </div>
       </div>`;
     }
 
-    // Post-PVT — show readiness result
     const pvtScore = Readiness.pvtToScore(pvt.avgMs);
-    const profile2 = Account.get() || {};
-    const inputs = {
-      hrvDelta: 80,         // placeholder (no Garmin)
-      sleepScore: 85,       // placeholder
-      tsbNorm: 75,          // placeholder
-      pvtDelta: pvtScore,
-      rpeInv: 80            // placeholder
-    };
-    const result = Readiness.calculate(inputs);
-    // Save to history
+    const result = Readiness.calculate({ hrvDelta: 80, sleepScore: 85, tsbNorm: 75, pvtDelta: pvtScore, rpeInv: 80 });
     const existingToday = (DB.get('readiness_history', [])).some(r => r.date === today);
-    if (!existingToday) {
-      DB.push('readiness_history', { date: today, ...result, pvtMs: pvt.avgMs, timestamp: Date.now() });
-    }
+    if (!existingToday) DB.push('readiness_history', { date: today, ...result, pvtMs: pvt.avgMs, timestamp: Date.now() });
     const color = Readiness.stateColor(result.state);
     const directive = Readiness.directive(result.state);
 
-    // SVG arc for score
-    const r = 68, circ = 2 * Math.PI * r;
-    const arc = circ * (result.score / 100);
-    const offset = circ - arc;
-
     return `
     <div class="page-header">
-      <div class="page-title">System <span>Readiness</span></div>
-      <div class="page-sub">${today} · Diagnostic Complete</div>
+      <div class="page-title">${this.t('readiness_score')}</div>
     </div>
-    <div class="grid-2" style="gap:24px;align-items:start">
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <!-- Score ring -->
-        <div class="card" style="text-align:center">
-          <div style="position:relative;width:160px;height:160px;margin:0 auto 16px">
-            <svg width="160" height="160" viewBox="0 0 160 160" style="transform:rotate(-90deg)">
-              <circle cx="80" cy="80" r="68" fill="none" stroke="var(--bg3)" stroke-width="8"/>
-              <circle cx="80" cy="80" r="68" fill="none" stroke="${color}" stroke-width="8"
-                stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
-                stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>
-            </svg>
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
-              <div style="font-size:52px;font-weight:900;color:${color}">${result.score}</div>
-              <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Score</div>
-            </div>
-          </div>
-          <div style="font-size:22px;font-weight:800;letter-spacing:2px;color:${color}">${result.state.toUpperCase()}</div>
-          <div style="font-size:13px;color:var(--text2);margin-top:6px">Today's operational state</div>
-        </div>
-
-        <!-- PVT Diagnostics -->
-        <div class="card">
-          <div class="card-title">PVT Diagnostics</div>
-          <div class="grid-3" style="gap:10px">
-            <div class="stat-box"><div class="stat-label">Avg RT</div><div class="stat-value" style="font-size:24px">${pvt.avgMs}</div><div class="stat-unit">ms</div></div>
-            <div class="stat-box"><div class="stat-label">Lapses</div><div class="stat-value" style="font-size:24px;color:${pvt.lapses > 2 ? 'var(--red)' : 'var(--text)'}">${pvt.lapses}</div><div class="stat-unit">>500ms</div></div>
-            <div class="stat-box"><div class="stat-label">False</div><div class="stat-value" style="font-size:24px">${pvt.falseStarts}</div><div class="stat-unit">starts</div></div>
-          </div>
-        </div>
+    <div class="grid-2" style="gap:24px">
+      <div class="card" style="text-align:center">
+        <div style="font-size:52px;font-weight:900;color:${color}">${result.score}</div>
+        <div style="font-size:22px;font-weight:800;color:${color}">${result.state.toUpperCase()}</div>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <!-- Directives -->
-        <div class="card">
-          <div class="card-title">Today's Directives</div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid ${color}">
-              <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Training</div>
-              <div style="font-size:15px;font-weight:600">${directive.training}</div>
-            </div>
-            <div style="background:var(--bg2);border-radius:8px;padding:14px;border-left:3px solid var(--accent2)">
-              <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Academic</div>
-              <div style="font-size:15px;font-weight:600">${directive.academic}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Signal Breakdown -->
-        <div class="card">
-          <div class="card-title">Signal Weights</div>
-          ${[
-            { label: 'HRV (28%)', value: inputs.hrvDelta, color: '#10b981' },
-            { label: 'Sleep (25%)', value: inputs.sleepScore, color: '#4f8ef7' },
-            { label: 'TSB (20%)', value: inputs.tsbNorm, color: '#7c5cfc' },
-            { label: 'PVT (15%)', value: pvtScore, color: '#f59e0b' },
-            { label: 'RPE (12%)', value: inputs.rpeInv, color: '#f97316' },
-          ].map(s => `
-          <div style="margin-bottom:12px">
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-              <span style="color:var(--text2)">${s.label}</span>
-              <span style="color:${s.color};font-weight:700">${s.value}</span>
-            </div>
-            <div class="progress-bar-bg"><div style="height:100%;border-radius:99px;background:${s.color};width:${s.value}%;transition:width .8s ease"></div></div>
-          </div>`).join('')}
-        </div>
-
-        <button class="btn btn-primary btn-full btn-lg" onclick="App.navigate('deepwork')">
-          🧠 Acknowledge & Begin Deep Work
-        </button>
+      <div class="card">
+        <div class="card-title">${this.t('directives')}</div>
+        <div style="font-size:15px;font-weight:600">${directive.training}</div>
       </div>
     </div>`;
   },
@@ -373,5 +502,4 @@ const App = {
   }
 };
 
-// Boot
 window.addEventListener('DOMContentLoaded', () => App.init());
