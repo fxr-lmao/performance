@@ -25,6 +25,16 @@ const DB = {
     this.set(key, arr);
   },
 
+  addXP(amount, reason) {
+    let xp = parseInt(this.get('total_xp', 0)) || 0;
+    xp += amount;
+    this.set('total_xp', xp);
+    if (window.App && App.toast) {
+      App.toast(`+${amount} XP: ${reason}`, 'success');
+      if (App.updateXP) App.updateXP();
+    }
+  },
+
   del(key) {
     localStorage.removeItem(this._key(key));
     this._scheduleSave();

@@ -13,7 +13,8 @@
       "backgroundColor": "#0a0a0a"
     },
     "ios": {
-      "bundleIdentifier": "com.victor.performance",
+      "bundleIdentifier": "com.victor.performanceapp.2026",
+      "deploymentTarget": "15.1",
       "supportsTablet": true
     },
     "android": {
@@ -35,7 +36,7 @@
         "expo-build-properties",
         {
           "ios": {
-            "deploymentTarget": "14.0"
+            "deploymentTarget": "15.1"
           }
         }
       ]

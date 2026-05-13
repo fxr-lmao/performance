@@ -237,8 +237,12 @@ const DeepWork = {
     clearInterval(this._interval);
     this._running = false;
     const cfg = this._getConfig();
-    DB.push('deepwork_log', { date: DB.today(), durationMin: cfg.totalMinutes, completedAt: Date.now() });
-    this._log('Deep Work block COMPLETE. ');
+    if (cfg.totalMinutes > 0) {
+      const mins = cfg.totalMinutes;
+      DB.push('deepwork_log', { date: DB.today(), minutes: mins, timestamp: Date.now() });
+      DB.addXP(mins * 2, `Deep Work (${mins}m)`);
+      App.toast(`Logged ${mins} minutes of Deep Work`, 'success');
+    }
     const btn = document.getElementById('dw-toggle-btn');
     btn.textContent = 'VIEW PILOT LOG';
     btn.className = 'btn btn-primary btn-lg';

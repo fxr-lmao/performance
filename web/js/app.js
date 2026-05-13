@@ -78,6 +78,17 @@ const App = {
         <span class="nav-icon">📋</span><span>Task Stack</span>
       </button>
 
+      <div class="nav-section" style="margin-top:16px">Tactical</div>
+      <button class="nav-item" id="nav-tactical" onclick="App.navigate('tactical')">
+        <span class="nav-icon">🦅</span><span>Operator Hub</span>
+      </button>
+      <button class="nav-item" id="nav-challenges" onclick="App.navigate('challenges')">
+        <span class="nav-icon">🔥</span><span>The Crucible</span>
+      </button>
+      <button class="nav-item" id="nav-skills" onclick="App.navigate('skills')">
+        <span class="nav-icon">🧠</span><span>Skill Tree</span>
+      </button>
+
       <div class="nav-section" style="margin-top:16px">Analytics</div>
       <button class="nav-item" id="nav-dashboard" onclick="App.navigate('dashboard')">
         <span class="nav-icon">📊</span><span>Pilot Log</span>
@@ -89,9 +100,18 @@ const App = {
       </button>
 
       <div class="sidebar-spacer"></div>
-      <div class="sidebar-profile" onclick="App.navigate('settings')">
-        <div class="profile-name">${p.name || 'Pilot'}</div>
-        <div class="profile-meta">RCAF Target: ${p.rcafYear || 2031}</div>
+      <div class="sidebar-profile" onclick="App.navigate('settings')" style="padding:20px;border-top:1px solid var(--border);background:var(--bg2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-weight:700">${p.name || 'Pilot'}</div>
+          <div style="font-size:12px;font-weight:800;color:var(--accent)" id="user-rank">Officer Cadet</div>
+        </div>
+        <div class="progress-bar-bg" style="height:6px;margin-bottom:8px">
+          <div id="user-xp-bar" style="height:100%;background:var(--accent);border-radius:99px;width:0%;transition:width 0.3s ease"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);display:flex;justify-content:space-between">
+          <span>RCAF Target: ${p.rcafYear || 2031}</span>
+          <span id="user-xp-text" style="font-weight:700">0 XP</span>
+        </div>
       </div>
     </nav>
     <main class="main">
@@ -125,6 +145,11 @@ const App = {
     if (screen === 'pvt') PVT.afterRender();
     if (screen === 'deepwork') DeepWork.afterRender();
     if (screen === 'dashboard') Dashboard.afterRender();
+    if (screen === 'tactical') Tactical.afterRender();
+    if (screen === 'challenges') Challenges.afterRender();
+    if (screen === 'skills') Skills.afterRender();
+    
+    this.updateXP();
   },
 
   _renderScreen(screen) {
@@ -133,9 +158,50 @@ const App = {
       case 'pvt': return PVT.render();
       case 'deepwork': return DeepWork.render();
       case 'tasks': return Tasks.render();
+      case 'tactical': return Tactical.render();
+      case 'challenges': return Challenges.render();
+      case 'skills': return Skills.render();
       case 'dashboard': return Dashboard.render();
       case 'settings': return Account.renderSettings();
       default: return '<div style="padding:40px;color:var(--text3)">Screen not found</div>';
+    }
+  },
+
+  updateXP() {
+    const xp = parseInt(DB.get('total_xp', 0)) || 0;
+    const ranks = [
+      { name: 'Officer Cadet', req: 0 },
+      { name: 'Second Lieutenant', req: 1000 },
+      { name: 'Lieutenant', req: 2500 },
+      { name: 'Captain', req: 5000 },
+      { name: 'Major', req: 10000 },
+      { name: 'Lt. Colonel', req: 25000 },
+      { name: 'Colonel', req: 50000 }
+    ];
+    let currentRank = ranks[0];
+    let nextRank = ranks[1];
+    for (let i = 0; i < ranks.length; i++) {
+      if (xp >= ranks[i].req) {
+        currentRank = ranks[i];
+        nextRank = ranks[i+1] || ranks[i];
+      }
+    }
+    
+    const xpEl = document.getElementById('user-xp-bar');
+    const rankEl = document.getElementById('user-rank');
+    const textEl = document.getElementById('user-xp-text');
+    
+    if (xpEl && rankEl && textEl) {
+      rankEl.textContent = currentRank.name;
+      textEl.textContent = `${xp} XP`;
+      if (nextRank.req > currentRank.req) {
+        const progress = ((xp - currentRank.req) / (nextRank.req - currentRank.req)) * 100;
+        xpEl.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        xpEl.parentElement.title = `Next Rank: ${nextRank.name} (${nextRank.req - xp} XP to go)`;
+      } else {
+        xpEl.style.width = `100%`;
+        xpEl.parentElement.title = `Max Rank Achieved`;
+      }
     }
   },
 
